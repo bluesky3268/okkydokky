@@ -18,7 +18,7 @@ public class Users {
     private Long userNo;
 
     @NotNull
-    @Column(name = "USER_ID", length = 20)
+    @Column(name = "USER_ID", length = 20, unique = true)
     private String userId;
 
     @NotNull
@@ -26,14 +26,14 @@ public class Users {
     private String passwd;
 
     @NotNull
-    @Column(name = "NICKNAME", length = 20)
+    @Column(name = "NICKNAME", length = 20, unique = true)
     private String nickname;
 
     @NotNull
-    @Column(name = "EMAIL", length = 30)
+    @Column(name = "EMAIL", length = 30, unique = true)
     private String email;
 
-    @Column(name = "EMAIL_CONFIRM", length = 1, columnDefinition = "VARCHAR(1) DEFAULT 'N'")
+    @Column(name = "EMAIL_CONFIRM", length = 1)
     private String emailConfirm;
 
     @Column(name = "TEL", length = 11)
@@ -46,7 +46,7 @@ public class Users {
     @Column(name = "POINT")
     private Integer point;
 
-    @Column(name = "AUTH_TYPE",  columnDefinition = "VARCHAR(20) DEFAULT 'USER'")
+    @Column(name = "AUTH_TYPE")
     private AuthType authType;
 
     @Column(name = "REPORT_CNT")
@@ -55,33 +55,82 @@ public class Users {
     @Column(name = "LOGIN_FAIL_CNT")
     private Integer loginFailCnt;
 
-    @Column(name = "LOCK_YN", columnDefinition = "VARCHAR(1) DEFAULT 'N'")
+    @Column(name = "LOCK_YN")
     private String lockYn;
 
     @NotNull
     @Column(name = "REG_DATE")
     private LocalDateTime regDate;
 
-    @Column(name = "DEL_YN", columnDefinition = "VARCHAR(1) DEFAULT 'N'")
+    @Column(name = "DEL_YN")
     private String delYn;
 
 
     @Builder
-    public Users(Long userNo, String userId, String passwd, String nickname, String email, String emailConfirm, String tel, File file, Integer point, AuthType authType, Integer reportCnt, Integer loginFailCnt, String lockYn, LocalDateTime regDate, String delYn) {
+    public Users(Long userNo, String userId, String passwd, String nickname, String email, String emailConfirm, String tel, File file, Integer point, AuthType authType, Integer reportCnt, Integer loginFailCnt, String lockYn, String delYn) {
         this.userNo = userNo;
         this.userId = userId;
         this.passwd = passwd;
         this.nickname = nickname;
         this.email = email;
-        this.emailConfirm = emailConfirm;
+        if (emailConfirm == null) {
+            this.emailConfirm = "N";
+        } else {
+            this.emailConfirm = emailConfirm;
+        }
         this.tel = tel;
         this.file = file;
         this.point = point;
-        this.authType = authType;
+        if (authType == null) {
+            this.authType = AuthType.USER;
+        }else{
+            this.authType = authType;
+        }
         this.reportCnt = reportCnt;
         this.loginFailCnt = loginFailCnt;
-        this.lockYn = lockYn;
+        if (lockYn == null) {
+            this.lockYn = "N";
+        }else{
+            this.lockYn = lockYn;
+        }
         this.regDate = LocalDateTime.now();
-        this.delYn = delYn;
+        if (delYn == null) {
+            this.delYn = "N";
+        } else {
+            this.delYn = delYn;
+        }
+    }
+
+    public void updatePasswd(String passwd) {
+        this.passwd = passwd;
+    }
+
+    public void updateTel(String tel) {
+        this.tel = tel;
+    }
+
+    public void updateNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    @Override
+    public String toString() {
+        return "Users{" +
+                "userNo=" + userNo +
+                ", userId='" + userId + '\'' +
+                ", passwd='" + passwd + '\'' +
+                ", nickname='" + nickname + '\'' +
+                ", email='" + email + '\'' +
+                ", emailConfirm='" + emailConfirm + '\'' +
+                ", tel='" + tel + '\'' +
+                ", file=" + file +
+                ", point=" + point +
+                ", authType=" + authType +
+                ", reportCnt=" + reportCnt +
+                ", loginFailCnt=" + loginFailCnt +
+                ", lockYn='" + lockYn + '\'' +
+                ", regDate=" + regDate +
+                ", delYn='" + delYn + '\'' +
+                '}';
     }
 }
