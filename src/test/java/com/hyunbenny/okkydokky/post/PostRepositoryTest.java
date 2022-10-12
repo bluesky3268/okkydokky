@@ -5,20 +5,18 @@ import com.hyunbenny.okkydokky.entity.Users;
 import com.hyunbenny.okkydokky.enums.PostType;
 import com.hyunbenny.okkydokky.users.UserRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.aspectj.lang.annotation.Before;
-import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.test.context.jdbc.Sql;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Slf4j
 @DataJpaTest
@@ -133,5 +131,85 @@ public class PostRepositoryTest {
 
     }
 
+    @Test
+    @DisplayName("게시글 제목 수정")
+    public void updatePostTitle() {
+        // given
+        Users user = userRepository.findById(1L).get();
+        Post post = Post.builder()
+                .postNo(1L)
+                .postType(PostType.C)
+                .title("title1")
+                .cont("cont1")
+                .passwd("1234")
+                .user(user)
+                .regDate(LocalDateTime.now())
+                .build();
+
+        Post savedPost = postRepository.save(post);
+
+        // when
+        String updateTitle = "title1_update!!";
+
+        savedPost.updateTitle(updateTitle);
+
+        // then
+        Post afterUpdate = postRepository.findById(1L).get();
+        assertThat(afterUpdate.getTitle()).isEqualTo(updateTitle);
+    }
+
+    @Test
+    @DisplayName("게시글 내용 수정")
+    public void updatePostCont() {
+        // given
+        Users user = userRepository.findById(1L).get();
+        Post post = Post.builder()
+                .postNo(1L)
+                .postType(PostType.C)
+                .title("title1")
+                .cont("cont1")
+                .passwd("1234")
+                .user(user)
+                .regDate(LocalDateTime.now())
+                .build();
+
+        Post savedPost = postRepository.save(post);
+
+        // when
+        String updateCont = "cont1_update!!";
+
+        savedPost.updateCont(updateCont);
+
+        // then
+        Post afterUpdate = postRepository.findById(1L).get();
+        assertThat(afterUpdate.getCont()).isEqualTo(updateCont);
+    }
+
+    @Test
+    @DisplayName("게시글 삭제")
+    public void deletePostById() {
+        // given
+        Users user = userRepository.findById(1L).get();
+        Post post = Post.builder()
+                .postNo(1L)
+                .postType(PostType.C)
+                .title("title1")
+                .cont("cont1")
+                .passwd("1234")
+                .user(user)
+                .regDate(LocalDateTime.now())
+                .build();
+
+        postRepository.save(post);
+
+        // when
+        Long postId = 1L;
+        postRepository.deleteById(postId);
+
+        // then
+        Optional<Post> findPost = postRepository.findById(postId);
+        assertFalse(findPost.isPresent());
+        assertTrue(findPost.isEmpty());
+    }
 
 }

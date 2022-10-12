@@ -79,4 +79,14 @@ public class Post {
                 ", updDate=" + updDate +
                 '}';
     }
+
+    public void updateTitle(String updateTitle) {
+        this.title = updateTitle;
+        this.updDate = LocalDateTime.now();
+    }
+
+    public void updateCont(String updateCont) {
+        this.cont = updateCont;
+        this.updDate = LocalDateTime.now();
+    }
 }
