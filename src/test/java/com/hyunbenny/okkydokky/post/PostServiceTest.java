@@ -4,6 +4,7 @@ import com.hyunbenny.okkydokky.entity.Post;
 import com.hyunbenny.okkydokky.entity.Users;
 import com.hyunbenny.okkydokky.enums.PostType;
 import com.hyunbenny.okkydokky.exception.PostNotFoundException;
+import com.hyunbenny.okkydokky.exception.UserNotExistException;
 import com.hyunbenny.okkydokky.post.dto.PostSaveReqDto;
 import com.hyunbenny.okkydokky.post.dto.respDto.PostRespDto;
 import com.hyunbenny.okkydokky.users.UserRepository;
@@ -95,15 +96,15 @@ public class PostServiceTest {
                 .build();
 
         // expected
-        assertThrows(IllegalArgumentException.class, () -> {
+        assertThrows(UserNotExistException.class, () -> {
             postService.savePost(saveReqDto);
         });
 
-        Throwable exception = assertThrows(IllegalArgumentException.class, () -> {
+        Throwable exception = assertThrows(UserNotExistException.class, () -> {
             postService.savePost(saveReqDto);
-        }, "존재하지 않는 유저정보입니다. userId : " + userId);
+        }, "존재하지 않는 유저입니다. userId : " + userId);
 
-        assertThat("존재하지 않는 유저정보입니다. userId : " + userId).isEqualTo(exception.getMessage());
+        assertThat("존재하지 않는 유저입니다. userId : " + userId).isEqualTo(exception.getMessage());
 
     }
 
@@ -153,7 +154,7 @@ public class PostServiceTest {
                 .build();
         postRepository.save(post);
 
-        // expected다
+        // expected
         Long postNo = 10L;
         assertThrows(PostNotFoundException.class, () -> {
             postService.getPost(postNo);
