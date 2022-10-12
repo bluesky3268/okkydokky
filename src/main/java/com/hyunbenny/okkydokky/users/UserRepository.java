@@ -1,4 +1,4 @@
-package com.hyunbenny.okkydokky.repository;
+package com.hyunbenny.okkydokky.users;
 
 import com.hyunbenny.okkydokky.entity.Users;
 import org.springframework.data.jpa.repository.JpaRepository;
