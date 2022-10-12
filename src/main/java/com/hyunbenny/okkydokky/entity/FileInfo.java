@@ -4,17 +4,14 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @NoArgsConstructor
-public class File {
+public class FileInfo {
 
     @Id
     @Column(name = "FILE_NO")
@@ -44,8 +41,12 @@ public class File {
     @Column(name = "REG_DATE")
     private LocalDateTime regDate;
 
+    @ManyToOne
+    @JoinColumn(name = "POST_NO")
+    private Post post;
+
     @Builder
-    public File(Long fileNo, Integer fileSeq, String fileName, String originName, String fileExt, String fileSize, String delYn, String regUser, LocalDateTime regDate) {
+    public FileInfo(Long fileNo, Integer fileSeq, String fileName, String originName, String fileExt, String fileSize, String delYn, String regUser, LocalDateTime regDate, Post post) {
         this.fileNo = fileNo;
         this.fileSeq = fileSeq;
         this.fileName = fileName;
@@ -55,5 +56,6 @@ public class File {
         this.delYn = delYn;
         this.regUser = regUser;
         this.regDate = regDate;
+        this.post = post;
     }
 }
