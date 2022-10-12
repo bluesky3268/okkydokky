@@ -1,5 +1,6 @@
 package com.hyunbenny.okkydokky.entity;
 
+import com.hyunbenny.okkydokky.enums.AuthType;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -39,21 +40,18 @@ public class Users {
     @Column(name = "TEL", length = 11)
     private String tel;
 
-    @OneToOne
-    @JoinColumn(name = "FILE_NO")
-    private File file;
-
     @Column(name = "POINT")
-    private Integer point;
+    private int point;
 
     @Column(name = "AUTH_TYPE")
+    @Enumerated(EnumType.STRING)
     private AuthType authType;
 
     @Column(name = "REPORT_CNT")
-    private Integer reportCnt;
+    private int reportCnt;
 
     @Column(name = "LOGIN_FAIL_CNT")
-    private Integer loginFailCnt;
+    private int loginFailCnt;
 
     @Column(name = "LOCK_YN")
     private String lockYn;
@@ -67,7 +65,7 @@ public class Users {
 
 
     @Builder
-    public Users(Long userNo, String userId, String passwd, String nickname, String email, String emailConfirm, String tel, File file, Integer point, AuthType authType, Integer reportCnt, Integer loginFailCnt, String lockYn, String delYn) {
+    public Users(Long userNo, String userId, String passwd, String nickname, String email, String emailConfirm, String tel, int point, AuthType authType, int reportCnt, int loginFailCnt, String lockYn, String delYn) {
         this.userNo = userNo;
         this.userId = userId;
         this.passwd = passwd;
@@ -79,7 +77,6 @@ public class Users {
             this.emailConfirm = emailConfirm;
         }
         this.tel = tel;
-        this.file = file;
         this.point = point;
         if (authType == null) {
             this.authType = AuthType.USER;
@@ -123,7 +120,6 @@ public class Users {
                 ", email='" + email + '\'' +
                 ", emailConfirm='" + emailConfirm + '\'' +
                 ", tel='" + tel + '\'' +
-                ", file=" + file +
                 ", point=" + point +
                 ", authType=" + authType +
                 ", reportCnt=" + reportCnt +
