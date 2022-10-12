@@ -1,7 +1,5 @@
-package com.hyunbenny.okkydokky.entity;
+package com.hyunbenny.okkydokky.enums;
 
 public enum AuthType {
-
     USER, ADMIN
-
 }
