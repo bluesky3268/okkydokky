@@ -5,12 +5,17 @@ import com.hyunbenny.okkydokky.entity.Users;
 import com.hyunbenny.okkydokky.enums.PostType;
 import com.hyunbenny.okkydokky.users.UserRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.aspectj.lang.annotation.After;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.test.context.jdbc.Sql;
 
+import javax.persistence.EntityManager;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -31,7 +36,6 @@ public class PostRepositoryTest {
     @BeforeEach
     public void init() {
         Users user = Users.builder()
-                .userNo(1L)
                 .userId("user1")
                 .passwd("1234")
                 .nickname("user")
@@ -41,11 +45,17 @@ public class PostRepositoryTest {
         userRepository.save(user);
     }
 
+    @AfterEach
+    public void cleanUp() {
+        postRepository.deleteAll();
+    }
+
+    @Sql("classpath:testdb/postTableReset.sql")
     @Test
     @DisplayName("게시글 등록")
     public void savePost() {
         // given
-        Users user = userRepository.findById(1L).get();
+        Users user = userRepository.findByUserId("user1").get();
 
         Post post = Post.builder()
                 .postNo(1L)
@@ -68,11 +78,12 @@ public class PostRepositoryTest {
         assertThat(savedPost.getUser().getUserId()).isEqualTo("user1");
     }
 
+    @Sql("classpath:testdb/postTableReset.sql")
     @Test
     @DisplayName("게시글 단건 ID로 조회")
     public void getPostById() {
         // given
-        Users user = userRepository.findById(1L).get();
+        Users user = userRepository.findByUserId("user1").get();
 
         Post post = Post.builder()
                 .postNo(1L)
@@ -100,11 +111,12 @@ public class PostRepositoryTest {
 
     }
 
+    @Sql("classpath:testdb/postTableReset.sql")
     @Test
     @DisplayName("게시글 단건 TITLE로 조회")
     public void getPostByTitle() {
         // given
-        Users user = userRepository.findById(1L).get();
+        Users user = userRepository.findByUserId("user1").get();
 
         Post post = Post.builder()
                 .postNo(1L)
@@ -131,11 +143,12 @@ public class PostRepositoryTest {
 
     }
 
+    @Sql("classpath:testdb/postTableReset.sql")
     @Test
     @DisplayName("게시글 제목 수정")
     public void updatePostTitle() {
         // given
-        Users user = userRepository.findById(1L).get();
+        Users user = userRepository.findByUserId("user1").get();
         Post post = Post.builder()
                 .postNo(1L)
                 .postType(PostType.C)
@@ -158,13 +171,13 @@ public class PostRepositoryTest {
         assertThat(afterUpdate.getTitle()).isEqualTo(updateTitle);
     }
 
+    @Sql("classpath:testdb/postTableReset.sql")
     @Test
     @DisplayName("게시글 내용 수정")
     public void updatePostCont() {
         // given
-        Users user = userRepository.findById(1L).get();
+        Users user = userRepository.findByUserId("user1").get();
         Post post = Post.builder()
-                .postNo(1L)
                 .postType(PostType.C)
                 .title("title1")
                 .cont("cont1")
@@ -174,6 +187,7 @@ public class PostRepositoryTest {
                 .build();
 
         Post savedPost = postRepository.save(post);
+        log.info("========== savedPost : {} ==========", savedPost.toString());
 
         // when
         String updateCont = "cont1_update!!";
@@ -185,11 +199,12 @@ public class PostRepositoryTest {
         assertThat(afterUpdate.getCont()).isEqualTo(updateCont);
     }
 
+    @Sql("classpath:testdb/postTableReset.sql")
     @Test
     @DisplayName("게시글 삭제")
     public void deletePostById() {
         // given
-        Users user = userRepository.findById(1L).get();
+        Users user = userRepository.findByUserId("user1").get();
         Post post = Post.builder()
                 .postNo(1L)
                 .postType(PostType.C)

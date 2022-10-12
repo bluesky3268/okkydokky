@@ -18,9 +18,10 @@ public class PostService {
     private final UserRepository userRepository;
 
     @Transactional(rollbackFor = Exception.class)
-    public void savePost(PostSaveReqDto saveReqDto) {
+    public void savePost(PostSaveReqDto saveReqDto) throws IllegalArgumentException, Exception {
 
-        Users findUser = userRepository.findByUserId(saveReqDto.getUserId());
+        Users findUser = userRepository.findByUserId(saveReqDto.getUserId()).orElseThrow(() ->
+                new IllegalArgumentException("존재하지 않는 유저정보입니다. userId : " +  saveReqDto.getUserId()));
 
         postRepository.save(saveReqDto.toEntity(findUser));
 

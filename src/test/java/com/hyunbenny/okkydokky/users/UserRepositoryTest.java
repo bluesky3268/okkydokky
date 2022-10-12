@@ -22,7 +22,6 @@ public class UserRepositoryTest {
     private UserRepository userRepository;
 
     @Test
-    @Sql("classpath:testdb/userTableReset.sql")
     @DisplayName("유저 저장")
     public void saveUser() {
         // given
@@ -53,7 +52,6 @@ public class UserRepositoryTest {
     }
 
     @Test
-    @Sql("classpath:testdb/userTableReset.sql")
     @DisplayName("유저 아이디로 조회-성공")
     public void getUserByUserId_Success() {
         // given
@@ -73,14 +71,13 @@ public class UserRepositoryTest {
         userRepository.save(user);
 
         // when
-        Users findUser = userRepository.findByUserId(userIdParam);
+        Users findUser = userRepository.findByUserId(userIdParam).get();
 
         // then
         assertThat(findUser.getUserId()).isEqualTo(userIdParam);
     }
 
     @Test
-    @Sql("classpath:testdb/userTableReset.sql")
     @DisplayName("유저 아이디로 조회-회원 없음")
     public void getUserByUserId_Fail() {
         // given
@@ -100,14 +97,13 @@ public class UserRepositoryTest {
         userRepository.save(user);
 
         // when
-        Users findUser = userRepository.findByUserId("userB");
+        Users findUser = userRepository.findByUserId("userB").get();
 
         // then
         assertThat(findUser).isNull();
     }
 
     @Test
-    @Sql("classpath:testdb/userTableReset.sql")
     @DisplayName("유저 비밀번호 수정")
     public void updateUserPassword() {
         // given
@@ -132,14 +128,13 @@ public class UserRepositoryTest {
         String updatePassword = "passwordUpdate";
         savedUser.updatePasswd(updatePassword);
 
-        Users findUser = userRepository.findByUserId(userIdParam);
+        Users findUser = userRepository.findByUserId(userIdParam).get();
 
         // then
         assertThat(findUser.getPasswd()).isEqualTo(updatePassword);
     }
 
     @Test
-    @Sql("classpath:testdb/userTableReset.sql")
     @DisplayName("유저 닉네임 수정")
     public void updateUserNickname() {
         // given
@@ -164,14 +159,13 @@ public class UserRepositoryTest {
         String updateNick = "USER_A_UPDATE";
         savedUser.updateNickname(updateNick);
 
-        Users findUser = userRepository.findByUserId(userIdParam);
+        Users findUser = userRepository.findByUserId(userIdParam).get();
 
         // then
         assertThat(findUser.getNickname()).isEqualTo(updateNick);
     }
 
     @Test
-    @Sql("classpath:testdb/userTableReset.sql")
     @DisplayName("유저 전화번호 수정")
     public void updateUserTel() {
         // given
@@ -198,14 +192,13 @@ public class UserRepositoryTest {
         String updateTel = "01098765432";
         savedUser.updateTel(updateTel);
 
-        Users findUser = userRepository.findByUserId(userIdParam);
+        Users findUser = userRepository.findByUserId(userIdParam).get();
 
         // then
         assertThat(findUser.getTel()).isEqualTo(updateTel);
     }
 
     @Test
-    @Sql("classpath:testdb/userTableReset.sql")
     @DisplayName("유저 삭제 - userNo로 삭제")
     public void deleteByUserNo() {
         // given
@@ -235,7 +228,6 @@ public class UserRepositoryTest {
     }
 
     @Test
-    @Sql("classpath:testdb/userTableReset.sql")
     @DisplayName("유저 삭제 - userId로 삭제")
     public void deleteByUserId() {
         // given
@@ -258,7 +250,7 @@ public class UserRepositoryTest {
         userRepository.deleteByUserId(userIdParam);
 
         // then
-        Users findUser = userRepository.findByUserId(userIdParam);
+        Users findUser = userRepository.findByUserId(userIdParam).get();
 
         assertThat(findUser).isNull();
     }

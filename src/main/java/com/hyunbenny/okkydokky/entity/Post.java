@@ -35,8 +35,10 @@ public class Post {
     @Column(name = "CONT")
     private String cont;
 
+    @Column(name = "RECOMMEND")
     private int recommend;
 
+    @Column(name = "VIEWS")
     private long views;
 
     @NotNull
@@ -65,6 +67,16 @@ public class Post {
         this.updDate = updDate;
     }
 
+    public void updateTitle(String updateTitle) {
+        this.title = updateTitle;
+        this.updDate = LocalDateTime.now();
+    }
+
+    public void updateCont(String updateCont) {
+        this.cont = updateCont;
+        this.updDate = LocalDateTime.now();
+    }
+
     @Override
     public String toString() {
         return "Post{" +
@@ -81,13 +93,4 @@ public class Post {
                 '}';
     }
 
-    public void updateTitle(String updateTitle) {
-        this.title = updateTitle;
-        this.updDate = LocalDateTime.now();
-    }
-
-    public void updateCont(String updateCont) {
-        this.cont = updateCont;
-        this.updDate = LocalDateTime.now();
-    }
 }
