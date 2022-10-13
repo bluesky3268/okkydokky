@@ -28,8 +28,6 @@ public class PostService {
 
     private final PostRepository postRepository;
 
-    private final PostRepositoryImpl postRepositoryImpl;
-
     private final UserRepository userRepository;
 
     public void savePost(PostSaveReqDto saveReqDto) throws IllegalArgumentException, Exception {
@@ -47,7 +45,7 @@ public class PostService {
     }
 
     public Page<PostListRespDto> getPostList(BoardType boardType, PostPager pager) {
-        Page<Post> result = postRepositoryImpl.findAllPostsWithPaging(boardType, pager.of("POST_NO"));
+        Page<Post> result = postRepository.findAllPostsWithPaging(boardType, pager.of("POST_NO"));
         List<PostListRespDto> postList = result.getContent().stream().map(post -> new PostListRespDto().toListRespDto(post)).collect(Collectors.toList());
         return new PageImpl<>(postList, result.getPageable(), postList.size());
     }

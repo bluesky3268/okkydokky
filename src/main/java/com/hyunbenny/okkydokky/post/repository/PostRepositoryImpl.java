@@ -10,21 +10,21 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 
 import java.util.List;
 
 @Slf4j
-@Repository
 @RequiredArgsConstructor
 public class PostRepositoryImpl implements PostRepositoryCustom{
 
     private final JPAQueryFactory queryFactory;
-    QPost post = QPost.post;
-    QUsers user = QUsers.users;
 
     @Override
     public Page<Post> findAllPostsWithPaging(BoardType boardType, Pageable pageable) {
+        QPost post = QPost.post;
+        QUsers user = QUsers.users;
+
         List<Post> result = queryFactory.select(post)
                 .from(post)
                 .leftJoin(user).on(user.userNo.eq(post.user.userNo))
