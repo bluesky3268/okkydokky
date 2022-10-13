@@ -1,6 +1,6 @@
 package com.hyunbenny.okkydokky.entity;
 
-import com.hyunbenny.okkydokky.enums.PostType;
+import com.hyunbenny.okkydokky.enums.BoardType;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,7 +21,7 @@ public class Post {
 
     @NotNull
     @Column(name = "POST_TYPE")
-    private PostType postType;
+    private BoardType boardType;
 
     @NotNull
     @Column(name = "TITLE")
@@ -54,9 +54,9 @@ public class Post {
     private LocalDateTime updDate;
 
     @Builder
-    public Post(Long postNo, PostType postType, String title, String passwd, String cont, int recommend, long views, Users user, LocalDateTime regDate, LocalDateTime updDate) {
+    public Post(Long postNo, BoardType boardType, String title, String passwd, String cont, int recommend, long views, Users user, LocalDateTime regDate, LocalDateTime updDate) {
         this.postNo = postNo;
-        this.postType = postType;
+        this.boardType = boardType;
         this.title = title;
         this.passwd = passwd;
         this.cont = cont;
@@ -81,7 +81,7 @@ public class Post {
     public String toString() {
         return "Post{" +
                 "postNo=" + postNo +
-                ", postType=" + postType +
+                ", postType=" + boardType +
                 ", title='" + title + '\'' +
                 ", passwd='" + passwd + '\'' +
                 ", cont='" + cont + '\'' +
@@ -93,4 +93,7 @@ public class Post {
                 '}';
     }
 
+    public void increaseViews() {
+        this.views += 1;
+    }
 }

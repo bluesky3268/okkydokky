@@ -1,6 +1,6 @@
 package com.hyunbenny.okkydokky.enums;
 
-public enum PostType {
+public enum BoardType {
     // COMMUNITY, NOTICE, QNA
     C, N, Q
 }

@@ -2,12 +2,15 @@ package com.hyunbenny.okkydokky.post;
 
 import com.hyunbenny.okkydokky.entity.Post;
 import com.hyunbenny.okkydokky.entity.Users;
-import com.hyunbenny.okkydokky.enums.PostType;
+import com.hyunbenny.okkydokky.enums.BoardType;
 import com.hyunbenny.okkydokky.exception.PostNotFoundException;
 import com.hyunbenny.okkydokky.exception.UserNotExistException;
-import com.hyunbenny.okkydokky.post.dto.PostSaveReqDto;
+import com.hyunbenny.okkydokky.post.dto.reqDto.PostSaveReqDto;
+import com.hyunbenny.okkydokky.post.dto.respDto.PostListRespDto;
 import com.hyunbenny.okkydokky.post.dto.respDto.PostRespDto;
+import com.hyunbenny.okkydokky.post.repository.PostRepository;
 import com.hyunbenny.okkydokky.users.UserRepository;
+import com.hyunbenny.okkydokky.util.PostPager;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,11 +18,15 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.context.jdbc.Sql;
 
 
 import java.time.LocalDateTime;
-import java.util.Optional;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -39,14 +46,23 @@ public class PostServiceTest {
 
     @BeforeEach
     public void init() {
-        Users user = Users.builder()
+        Users user1 = Users.builder()
                 .userId("user1")
                 .passwd("1234")
-                .nickname("user")
+                .nickname("user1")
                 .email("user1@email.com")
                 .build();
 
-        userRepository.save(user);
+        userRepository.save(user1);
+
+        Users user2 = Users.builder()
+                .userId("user2")
+                .passwd("1234")
+                .nickname("user2")
+                .email("user2@email.com")
+                .build();
+
+        userRepository.save(user2);
     }
 
     @AfterEach
@@ -61,7 +77,7 @@ public class PostServiceTest {
     public void savePost() throws Exception {
         // given
         PostSaveReqDto saveReqDto = PostSaveReqDto.builder()
-                .postType(PostType.C)
+                .boardType(BoardType.C)
                 .title("게시글 제목")
                 .cont("게시글 내용")
                 .passwd("1234")
@@ -74,7 +90,7 @@ public class PostServiceTest {
         // then
         Post findPost = postRepository.findById(1L).get();
 
-        assertThat(findPost.getPostType()).isEqualTo(PostType.C);
+        assertThat(findPost.getBoardType()).isEqualTo(BoardType.C);
         assertThat(findPost.getTitle()).isEqualTo("게시글 제목");
         assertThat(findPost.getCont()).isEqualTo("게시글 내용");
         assertThat(findPost.getUser().getUserId()).isEqualTo("user1");
@@ -88,7 +104,7 @@ public class PostServiceTest {
         // given
         String userId = "user10";
         PostSaveReqDto saveReqDto = PostSaveReqDto.builder()
-                .postType(PostType.C)
+                .boardType(BoardType.C)
                 .title("게시글 제목")
                 .cont("게시글 내용")
                 .passwd("1234")
@@ -115,7 +131,7 @@ public class PostServiceTest {
         // given
         Users user = userRepository.findByUserId("user1").get();
         Post post = Post.builder()
-                .postType(PostType.C)
+                .boardType(BoardType.C)
                 .title("title1")
                 .cont("cont1")
                 .passwd("1234")
@@ -132,9 +148,10 @@ public class PostServiceTest {
 
         // then
         assertThat(postResp.getPostNo()).isEqualTo(postNo);
-        assertThat(postResp.getPostType()).isEqualTo(post.getPostType());
+        assertThat(postResp.getBoardType()).isEqualTo(post.getBoardType());
         assertThat(postResp.getTitle()).isEqualTo(post.getTitle());
         assertThat(postResp.getCont()).isEqualTo(post.getCont());
+        assertThat(postResp.getViews()).isEqualTo(savedPost.getViews() + 1);
         assertThat(postResp.getUserId()).isEqualTo(post.getUser().getUserId());
     }
 
@@ -145,7 +162,7 @@ public class PostServiceTest {
         // given
         Users user = userRepository.findByUserId("user1").get();
         Post post = Post.builder()
-                .postType(PostType.C)
+                .boardType(BoardType.C)
                 .title("title1")
                 .cont("cont1")
                 .passwd("1234")
@@ -165,6 +182,78 @@ public class PostServiceTest {
         }, "게시글이 존재하지 않습니다.");
 
         assertThat("게시글이 존재하지 않습니다.").isEqualTo(exception.getMessage());
+    }
+
+    @Sql("classpath:testdb/postTableReset.sql")
+    @Test
+    @DisplayName("게시글 리스트 조회 BoardType C")
+    public void getPostListBoardTypeC() throws Exception {
+        Users user1 = userRepository.findByUserId("user1").get();
+        // given
+        List<Post> savedList1 = IntStream.range(1, 51)
+                .mapToObj(i -> Post.builder()
+                        .boardType(BoardType.C)
+                        .title("title" + i)
+                        .cont("cont" + i)
+                        .passwd("1234")
+                        .user(user1)
+                        .regDate(LocalDateTime.now())
+                        .build())
+                .collect(Collectors.toList());
+
+        postRepository.saveAll(savedList1);
+
+        // when
+        int page = 1;
+        int pageSize = 20;
+        PostPager pager = new PostPager(page, pageSize);
+        pager.setDirection(Sort.Direction.DESC);
+        Page<PostListRespDto> result = postService.getPostList(BoardType.C, pager);
+
+        // then
+        assertThat(result.getContent().size()).isEqualTo(20);
+        assertThat(result.getContent().get(0).getTitle()).isEqualTo("title50");
+        assertThat(result.getContent().get(0).getUserId()).isEqualTo("user1");
+        assertThat(result.getContent().get(14).getTitle()).isEqualTo("title36");
+        assertThat(result.getContent().get(14).getUserId()).isEqualTo("user1");
+        assertThat(result.getContent().get(19).getTitle()).isEqualTo("title31");
+        assertThat(result.getContent().get(19).getUserId()).isEqualTo("user1");
+    }
+
+    @Sql("classpath:testdb/postTableReset.sql")
+    @Test
+    @DisplayName("게시글 리스트 조회 - BoardType N")
+    public void getPostListBoardTypeN() throws Exception {
+        Users user2 = userRepository.findByUserId("user2").get();
+        // given
+        List<Post> savedList1 = IntStream.range(1, 101)
+                .mapToObj(i -> Post.builder()
+                        .boardType(BoardType.N)
+                        .title("title" + i)
+                        .cont("cont" + i)
+                        .passwd("1234")
+                        .user(user2)
+                        .regDate(LocalDateTime.now())
+                        .build())
+                .collect(Collectors.toList());
+
+        postRepository.saveAll(savedList1);
+
+        // when
+        int page = 3;
+        int pageSize = 20;
+        PostPager pager = new PostPager(page, pageSize);
+        pager.setDirection(Sort.Direction.DESC);
+        Page<PostListRespDto> result = postService.getPostList(BoardType.N, pager);
+
+        // then
+        assertThat(result.getContent().size()).isEqualTo(20);
+        assertThat(result.getContent().get(0).getTitle()).isEqualTo("title60");
+        assertThat(result.getContent().get(0).getUserId()).isEqualTo("user2");
+        assertThat(result.getContent().get(14).getTitle()).isEqualTo("title46");
+        assertThat(result.getContent().get(14).getUserId()).isEqualTo("user2");
+        assertThat(result.getContent().get(19).getTitle()).isEqualTo("title41");
+        assertThat(result.getContent().get(19).getUserId()).isEqualTo("user2");
     }
 
 }

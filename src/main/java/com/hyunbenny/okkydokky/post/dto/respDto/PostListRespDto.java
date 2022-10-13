@@ -10,18 +10,13 @@ import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
-public class PostRespDto {
+public class PostListRespDto {
 
     private Long postNo;
 
     private BoardType boardType;
 
     private String title;
-
-    private String cont;
-
-    private String passwd;
 
     private int recommend;
 
@@ -33,28 +28,25 @@ public class PostRespDto {
 
     private LocalDateTime updDate;
 
-    public PostRespDto toPostRespDto(Post post) {
+    public PostListRespDto toListRespDto(Post post) {
         this.postNo = post.getPostNo();
         this.boardType = post.getBoardType();
         this.title = post.getTitle();
-        this.cont = post.getCont();
-        this.passwd = post.getPasswd();
         this.recommend = post.getRecommend();
         this.views = post.getViews();
         this.userId = post.getUser().getUserId();
         this.regDate = post.getRegDate();
         this.updDate = post.getUpdDate();
+
         return this;
     }
 
     @Override
     public String toString() {
-        return "PostRespDto{" +
+        return "PostListRespDto{" +
                 "postNo=" + postNo +
-                ", postType=" + boardType +
+                ", boardType=" + boardType +
                 ", title='" + title + '\'' +
-                ", cont='" + cont + '\'' +
-                ", passwd='" + passwd + '\'' +
                 ", recommend=" + recommend +
                 ", views=" + views +
                 ", userId='" + userId + '\'' +

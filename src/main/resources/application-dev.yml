@@ -6,6 +6,12 @@ server:
       charset: utf-8
 
 spring:
+  data:
+    web:
+      pageable:
+        one-indexed-parameters: true # 웹에서 요청이 넘어 왔을 때 1로 보정을 해주는 역할
+        default-page-size: 20
+
   datasource:
     url: jdbc:h2:mem:okkydokky
     driver-class-name: org.h2.Driver

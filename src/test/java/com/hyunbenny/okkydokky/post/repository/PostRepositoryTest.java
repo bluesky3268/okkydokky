@@ -1,23 +1,28 @@
-package com.hyunbenny.okkydokky.post;
+package com.hyunbenny.okkydokky.post.repository;
 
 import com.hyunbenny.okkydokky.entity.Post;
 import com.hyunbenny.okkydokky.entity.Users;
-import com.hyunbenny.okkydokky.enums.PostType;
+import com.hyunbenny.okkydokky.enums.BoardType;
+import com.hyunbenny.okkydokky.post.repository.PostRepository;
+import com.hyunbenny.okkydokky.post.repository.PostRepositoryImpl;
 import com.hyunbenny.okkydokky.users.UserRepository;
+import com.hyunbenny.okkydokky.util.PostPager;
 import lombok.extern.slf4j.Slf4j;
-import org.aspectj.lang.annotation.After;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.context.jdbc.Sql;
 
-import javax.persistence.EntityManager;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -59,7 +64,7 @@ public class PostRepositoryTest {
 
         Post post = Post.builder()
                 .postNo(1L)
-                .postType(PostType.C)
+                .boardType(BoardType.C)
                 .title("title1")
                 .cont("cont1")
                 .passwd("1234")
@@ -71,7 +76,7 @@ public class PostRepositoryTest {
         Post savedPost = postRepository.save(post);
 
         // then
-        assertThat(savedPost.getPostType()).isEqualTo(PostType.C);
+        assertThat(savedPost.getBoardType()).isEqualTo(BoardType.C);
         assertThat(savedPost.getTitle()).isEqualTo("title1");
         assertThat(savedPost.getCont()).isEqualTo("cont1");
         assertThat(savedPost.getPasswd()).isEqualTo("1234");
@@ -87,7 +92,7 @@ public class PostRepositoryTest {
 
         Post post = Post.builder()
                 .postNo(1L)
-                .postType(PostType.C)
+                .boardType(BoardType.C)
                 .title("title1")
                 .cont("cont1")
                 .passwd("1234")
@@ -102,7 +107,7 @@ public class PostRepositoryTest {
         Post findPost = postRepository.findById(1L).get();
 
         // then
-        assertThat(findPost.getPostType()).isEqualTo(savedPost.getPostType());
+        assertThat(findPost.getBoardType()).isEqualTo(savedPost.getBoardType());
         assertThat(findPost.getTitle()).isEqualTo(savedPost.getTitle());
         assertThat(findPost.getCont()).isEqualTo(savedPost.getCont());
         assertThat(findPost.getPasswd()).isEqualTo(savedPost.getPasswd());
@@ -120,7 +125,7 @@ public class PostRepositoryTest {
 
         Post post = Post.builder()
                 .postNo(1L)
-                .postType(PostType.C)
+                .boardType(BoardType.C)
                 .title("title1")
                 .cont("cont1")
                 .passwd("1234")
@@ -134,7 +139,7 @@ public class PostRepositoryTest {
         Post findPost = postRepository.findByTitle("title1");
 
         // then
-        assertThat(findPost.getPostType()).isEqualTo(savedPost.getPostType());
+        assertThat(findPost.getBoardType()).isEqualTo(savedPost.getBoardType());
         assertThat(findPost.getTitle()).isEqualTo(savedPost.getTitle());
         assertThat(findPost.getCont()).isEqualTo(savedPost.getCont());
         assertThat(findPost.getPasswd()).isEqualTo(savedPost.getPasswd());
@@ -151,7 +156,7 @@ public class PostRepositoryTest {
         Users user = userRepository.findByUserId("user1").get();
         Post post = Post.builder()
                 .postNo(1L)
-                .postType(PostType.C)
+                .boardType(BoardType.C)
                 .title("title1")
                 .cont("cont1")
                 .passwd("1234")
@@ -178,7 +183,7 @@ public class PostRepositoryTest {
         // given
         Users user = userRepository.findByUserId("user1").get();
         Post post = Post.builder()
-                .postType(PostType.C)
+                .boardType(BoardType.C)
                 .title("title1")
                 .cont("cont1")
                 .passwd("1234")
@@ -207,7 +212,7 @@ public class PostRepositoryTest {
         Users user = userRepository.findByUserId("user1").get();
         Post post = Post.builder()
                 .postNo(1L)
-                .postType(PostType.C)
+                .boardType(BoardType.C)
                 .title("title1")
                 .cont("cont1")
                 .passwd("1234")
