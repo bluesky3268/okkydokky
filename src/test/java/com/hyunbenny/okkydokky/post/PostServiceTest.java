@@ -448,16 +448,63 @@ public class PostServiceTest {
 
     }
 
+    @Sql("classpath:testdb/postTableReset.sql")
     @Test
     @DisplayName("좋아요")
     public void hitTheLikeBtn() {
+        // given
+        Users user = userRepository.findByUserId("user1").get();
+        Post post = Post.builder()
+                .postNo(1L)
+                .boardType(BoardType.C)
+                .title("title1")
+                .cont("cont1")
+                .passwd("1234")
+                .user(user)
+                .regDate(LocalDateTime.now())
+                .build();
+        postRepository.save(post);
+
+        // when
+        Long postNo = 1L;
+        PostRespDto respDto = postService.hitLikeBtn(postNo);
+
+        // then
+        Post findPost = postRepository.findById(postNo).get();
+
+        assertThat(findPost.getPostNo()).isEqualTo(postNo);
+        assertThat(findPost.getRecommend()).isEqualTo(1);
 
     }
 
+    @Sql("classpath:testdb/postTableReset.sql")
     @Test
     @DisplayName("싫어요")
     public void hitTheDislikeBtn() {
+        // given
+        Users user = userRepository.findByUserId("user1").get();
+        Post post = Post.builder()
+                .postNo(1L)
+                .boardType(BoardType.C)
+                .title("title1")
+                .cont("cont1")
+                .passwd("1234")
+                .user(user)
+                .regDate(LocalDateTime.now())
+                .build();
+        postRepository.save(post);
 
+        // when
+        Long postNo = 1L;
+        PostRespDto respDto = postService.hitDislikeBtn(postNo);
+        log.info("========== respDto : {}", respDto.toString());
+
+        // then
+        Post findPost = postRepository.findById(postNo).get();
+        log.info("========== findPost : {}", findPost.toString());
+
+        assertThat(findPost.getPostNo()).isEqualTo(postNo);
+        assertThat(findPost.getRecommend()).isEqualTo(-1);
     }
 
 }

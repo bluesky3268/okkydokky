@@ -92,6 +92,14 @@ public class Post {
         this.views += 1;
     }
 
+    public void hitLikeBtn() {
+        this.recommend += 1;
+    }
+
+    public void hitDisLikeBtn() {
+        this.recommend -= 1;
+    }
+
     @Override
     public String toString() {
         return "Post{" +

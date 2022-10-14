@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -40,6 +41,7 @@ public class PostService {
     }
 
     // 게시글 단건 조회
+    @Transactional
     public PostRespDto getPost(Long postNo) {
         Post findPost = postRepository.findById(postNo).orElseThrow(() -> new PostNotFoundException());
         findPost.increaseViews();
@@ -54,6 +56,7 @@ public class PostService {
     }
 
     // 게시글 수정
+    @Transactional
     public PostRespDto modifyPost(PostEditReqDto updateDto) {
         Post findPost = postRepository.findById(updateDto.getPostNo()).orElseThrow(() -> new PostNotFoundException());
         findPost.modifyPost(updateDto);
@@ -66,9 +69,24 @@ public class PostService {
         postRepository.delete(findPost);
     }
 
+    @Transactional
     public PostRespDto movePostToOtherBoard(Long postNo, BoardType moveBoardType) {
         Post findPost = postRepository.findById(postNo).orElseThrow(() -> new PostNotFoundException());
         findPost.moveBoard(moveBoardType);
+        return new PostRespDto().toPostRespDto(findPost);
+    }
+
+    @Transactional
+    public PostRespDto hitLikeBtn(Long postNo) {
+        Post findPost = postRepository.findById(postNo).orElseThrow(() -> new PostNotFoundException());
+        findPost.hitLikeBtn();
+        return new PostRespDto().toPostRespDto(findPost);
+    }
+
+    @Transactional
+    public PostRespDto hitDislikeBtn(Long postNo) {
+        Post findPost = postRepository.findById(postNo).orElseThrow(() -> new PostNotFoundException());
+        findPost.hitDisLikeBtn();
         return new PostRespDto().toPostRespDto(findPost);
     }
 }
