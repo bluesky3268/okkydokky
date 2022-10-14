@@ -5,14 +5,12 @@ import com.hyunbenny.okkydokky.entity.Post;
 import com.hyunbenny.okkydokky.entity.Users;
 import com.hyunbenny.okkydokky.enums.BoardType;
 import com.hyunbenny.okkydokky.users.UserRepository;
-import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.jdbc.Sql;
@@ -167,7 +165,7 @@ public class PostRepositoryTest {
         // when
         String updateTitle = "title1_update!!";
 
-        savedPost.updateTitle(updateTitle);
+        savedPost.modifyTitle(updateTitle);
 
         // then
         Post afterUpdate = postRepository.findById(1L).get();
@@ -195,7 +193,7 @@ public class PostRepositoryTest {
         // when
         String updateCont = "cont1_update!!";
 
-        savedPost.updateCont(updateCont);
+        savedPost.modifyCont(updateCont);
 
         // then
         Post afterUpdate = postRepository.findById(1L).get();

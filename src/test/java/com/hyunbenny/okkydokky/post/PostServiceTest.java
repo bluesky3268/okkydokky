@@ -6,6 +6,7 @@ import com.hyunbenny.okkydokky.enums.BoardType;
 import com.hyunbenny.okkydokky.exception.PostNotFoundException;
 import com.hyunbenny.okkydokky.exception.UserNotExistException;
 import com.hyunbenny.okkydokky.post.dto.reqDto.PostSaveReqDto;
+import com.hyunbenny.okkydokky.post.dto.reqDto.PostEditReqDto;
 import com.hyunbenny.okkydokky.post.dto.respDto.PostListRespDto;
 import com.hyunbenny.okkydokky.post.dto.respDto.PostRespDto;
 import com.hyunbenny.okkydokky.post.repository.PostRepository;
@@ -25,6 +26,7 @@ import org.springframework.test.context.jdbc.Sql;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -254,6 +256,153 @@ public class PostServiceTest {
         assertThat(result.getContent().get(14).getUserId()).isEqualTo("user2");
         assertThat(result.getContent().get(19).getTitle()).isEqualTo("title41");
         assertThat(result.getContent().get(19).getUserId()).isEqualTo("user2");
+    }
+
+    @Sql("classpath:testdb/postTableReset.sql")
+    @Test
+    @DisplayName("게시글 수정 성공")
+    public void updatePostSuccess() {
+        // given
+        Users user = userRepository.findByUserId("user1").get();
+        Post post = Post.builder()
+                .postNo(1L)
+                .boardType(BoardType.C)
+                .title("title1")
+                .cont("cont1")
+                .passwd("1234")
+                .user(user)
+                .regDate(LocalDateTime.now())
+                .build();
+        postRepository.save(post);
+
+        String updateTitle = "update title1";
+        String updateContent = "update cont1";
+
+        PostEditReqDto updateDto = PostEditReqDto.builder()
+                .postNo(1L)
+                .boardType(BoardType.C)
+                .title(updateTitle)
+                .cont(updateContent)
+                .build();
+
+        // when
+        PostRespDto updatedPost = postService.modifyPost(updateDto);
+
+        // then
+        assertThat(updatedPost.getTitle()).isEqualTo(updateTitle);
+        assertThat(updatedPost.getCont()).isEqualTo(updateContent);
+        assertThat(updatedPost.getUpdDate()).isNotNull();
+    }
+
+    @Sql("classpath:testdb/postTableReset.sql")
+    @Test
+    @DisplayName("게시글 수정 실패 - 존재하지 않는 게시물")
+    public void updatePostFail() {
+        // given
+        Users user = userRepository.findByUserId("user1").get();
+        Post post = Post.builder()
+                .postNo(1L)
+                .boardType(BoardType.C)
+                .title("title1")
+                .cont("cont1")
+                .passwd("1234")
+                .user(user)
+                .regDate(LocalDateTime.now())
+                .build();
+        postRepository.save(post);
+
+        String updateTitle = "update title1";
+        String updateContent = "update cont1";
+
+        PostEditReqDto updateDto = PostEditReqDto.builder()
+                .postNo(2L)
+                .boardType(BoardType.C)
+                .title(updateTitle)
+                .cont(updateContent)
+                .build();
+
+       // expected
+        assertThrows(PostNotFoundException.class, () ->
+                postService.modifyPost(updateDto));
+
+    }
+
+    @Sql("classpath:testdb/postTableReset.sql")
+    @Test
+    @DisplayName("게시글 삭제 성공")
+    public void deletePostSuccess() {
+        // given
+        Users user = userRepository.findByUserId("user1").get();
+        Post post = Post.builder()
+                .postNo(1L)
+                .boardType(BoardType.C)
+                .title("title1")
+                .cont("cont1")
+                .passwd("1234")
+                .user(user)
+                .regDate(LocalDateTime.now())
+                .build();
+        postRepository.save(post);
+
+        Long deletePostNo = 1L;
+
+        // when
+        postService.deletePost(deletePostNo);
+
+        // then
+        Optional<Post> findPost = postRepository.findById(deletePostNo);
+        assertFalse(findPost.isPresent());
+        assertTrue(findPost.isEmpty());
+    }
+
+    @Sql("classpath:testdb/postTableReset.sql")
+    @Test
+    @DisplayName("게시글 삭제 실패 - 게시글 없음")
+    public void deletePostFail() {
+        // given
+        Users user = userRepository.findByUserId("user1").get();
+        Post post = Post.builder()
+                .postNo(1L)
+                .boardType(BoardType.C)
+                .title("title1")
+                .cont("cont1")
+                .passwd("1234")
+                .user(user)
+                .regDate(LocalDateTime.now())
+                .build();
+        postRepository.save(post);
+
+
+        Long deletePostNo = 2L;
+
+        // expected
+        assertThrows(PostNotFoundException.class, () -> {
+            postService.deletePost(deletePostNo);
+        });
+
+        Throwable exception = assertThrows(PostNotFoundException.class, () -> {
+            postService.deletePost(deletePostNo);
+        }, "게시글이 존재하지 않습니다.");
+
+        assertThat("게시글이 존재하지 않습니다.").isEqualTo(exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("게시판 옮기기")
+    public void moveBoard() {
+
+    }
+
+    @Test
+    @DisplayName("좋아요")
+    public void hitTheLikeBtn() {
+
+    }
+
+    @Test
+    @DisplayName("싫어요")
+    public void hitTheDislikeBtn() {
+
     }
 
 }

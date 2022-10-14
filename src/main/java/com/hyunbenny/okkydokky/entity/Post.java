@@ -1,6 +1,7 @@
 package com.hyunbenny.okkydokky.entity;
 
 import com.hyunbenny.okkydokky.enums.BoardType;
+import com.hyunbenny.okkydokky.post.dto.reqDto.PostEditReqDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -67,14 +68,28 @@ public class Post {
         this.updDate = updDate;
     }
 
-    public void updateTitle(String updateTitle) {
-        this.title = updateTitle;
+    public void modifyPost(PostEditReqDto editReqDto) {
+        this.title = editReqDto.getTitle() == null ? title : editReqDto.getTitle();
+        this.cont = editReqDto.getCont() == null ? cont : editReqDto.getCont();
         this.updDate = LocalDateTime.now();
     }
 
-    public void updateCont(String updateCont) {
-        this.cont = updateCont;
+    public void modifyTitle(String editTitle) {
+        this.title = editTitle;
         this.updDate = LocalDateTime.now();
+    }
+
+    public void modifyCont(String editCont) {
+        this.cont = editCont;
+        this.updDate = LocalDateTime.now();
+    }
+
+    public void moveBoard(BoardType boardType) {
+        this.boardType = boardType;
+    }
+
+    public void increaseViews() {
+        this.views += 1;
     }
 
     @Override
@@ -91,9 +106,5 @@ public class Post {
                 ", regDate=" + regDate +
                 ", updDate=" + updDate +
                 '}';
-    }
-
-    public void increaseViews() {
-        this.views += 1;
     }
 }
