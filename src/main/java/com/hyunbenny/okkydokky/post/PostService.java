@@ -62,7 +62,13 @@ public class PostService {
 
     // 게시글 삭제
     public void deletePost(Long postNo) {
-        Post post = postRepository.findById(postNo).orElseThrow(() -> new PostNotFoundException());
-        postRepository.delete(post);
+        Post findPost = postRepository.findById(postNo).orElseThrow(() -> new PostNotFoundException());
+        postRepository.delete(findPost);
+    }
+
+    public PostRespDto movePostToOtherBoard(Long postNo, BoardType moveBoardType) {
+        Post findPost = postRepository.findById(postNo).orElseThrow(() -> new PostNotFoundException());
+        findPost.moveBoard(moveBoardType);
+        return new PostRespDto().toPostRespDto(findPost);
     }
 }

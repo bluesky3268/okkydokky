@@ -387,9 +387,64 @@ public class PostServiceTest {
         assertThat("게시글이 존재하지 않습니다.").isEqualTo(exception.getMessage());
     }
 
+    @Sql("classpath:testdb/postTableReset.sql")
     @Test
-    @DisplayName("게시판 옮기기")
-    public void moveBoard() {
+    @DisplayName("게시글을 다른 게시판으로 옮기기")
+    public void moveBoardSuccess() {
+        // given
+        Users user = userRepository.findByUserId("user1").get();
+        Post post = Post.builder()
+                .postNo(1L)
+                .boardType(BoardType.C)
+                .title("title1")
+                .cont("cont1")
+                .passwd("1234")
+                .user(user)
+                .regDate(LocalDateTime.now())
+                .build();
+        postRepository.save(post);
+
+
+        // when
+        Long postNo = 1L;
+        PostRespDto postRespDto = postService.movePostToOtherBoard(postNo, BoardType.Q);
+
+        // then
+        assertThat(postRespDto.getPostNo()).isEqualTo(post.getPostNo());
+        assertThat(postRespDto.getBoardType()).isEqualTo(BoardType.Q);
+
+    }
+
+    @Sql("classpath:testdb/postTableReset.sql")
+    @Test
+    @DisplayName("게시글을 다른 게시판으로 옮기기 실패 - 게시글 없음")
+    public void moveBoardFail() {
+        // given
+        Users user = userRepository.findByUserId("user1").get();
+        Post post = Post.builder()
+                .postNo(1L)
+                .boardType(BoardType.C)
+                .title("title1")
+                .cont("cont1")
+                .passwd("1234")
+                .user(user)
+                .regDate(LocalDateTime.now())
+                .build();
+        postRepository.save(post);
+
+        Long postNo = 2L;
+        BoardType moveToBoardType = BoardType.Q;
+
+        // expected
+        assertThrows(PostNotFoundException.class, () -> {
+            postService.movePostToOtherBoard(postNo, moveToBoardType);
+        });
+
+        Throwable exception = assertThrows(PostNotFoundException.class, () -> {
+            postService.movePostToOtherBoard(postNo, moveToBoardType);
+        }, "게시글이 존재하지 않습니다.");
+
+        assertThat("게시글이 존재하지 않습니다.").isEqualTo(exception.getMessage());
 
     }
 
