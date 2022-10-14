@@ -69,6 +69,7 @@ public class PostService {
         postRepository.delete(findPost);
     }
 
+    // 게시글 다른 게시판으로 이동
     @Transactional
     public PostRespDto movePostToOtherBoard(Long postNo, BoardType moveBoardType) {
         Post findPost = postRepository.findById(postNo).orElseThrow(() -> new PostNotFoundException());
@@ -76,6 +77,7 @@ public class PostService {
         return new PostRespDto().toPostRespDto(findPost);
     }
 
+    // 추천
     @Transactional
     public PostRespDto hitLikeBtn(Long postNo) {
         Post findPost = postRepository.findById(postNo).orElseThrow(() -> new PostNotFoundException());
@@ -83,6 +85,7 @@ public class PostService {
         return new PostRespDto().toPostRespDto(findPost);
     }
 
+    // 비추천
     @Transactional
     public PostRespDto hitDislikeBtn(Long postNo) {
         Post findPost = postRepository.findById(postNo).orElseThrow(() -> new PostNotFoundException());
