@@ -32,7 +32,7 @@ public class PostListRespDto {
         this.postNo = post.getPostNo();
         this.boardType = post.getBoardType();
         this.title = post.getTitle();
-        this.recommend = post.getRecommend();
+        this.recommend = post.getLikes();
         this.views = post.getViews();
         this.userId = post.getUser().getUserId();
         this.regDate = post.getRegDate();

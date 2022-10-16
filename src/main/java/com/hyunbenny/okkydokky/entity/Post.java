@@ -1,5 +1,6 @@
 package com.hyunbenny.okkydokky.entity;
 
+import com.hyunbenny.okkydokky.common.code.PointPolicy;
 import com.hyunbenny.okkydokky.enums.BoardType;
 import com.hyunbenny.okkydokky.post.dto.reqDto.PostEditReqDto;
 import lombok.Builder;
@@ -36,8 +37,8 @@ public class Post {
     @Column(name = "CONT")
     private String cont;
 
-    @Column(name = "RECOMMEND")
-    private int recommend;
+    @Column(name = "LIKES")
+    private int likes;
 
     @Column(name = "VIEWS")
     private long views;
@@ -55,13 +56,13 @@ public class Post {
     private LocalDateTime updDate;
 
     @Builder
-    public Post(Long postNo, BoardType boardType, String title, String passwd, String cont, int recommend, long views, Users user, LocalDateTime regDate, LocalDateTime updDate) {
+    public Post(Long postNo, BoardType boardType, String title, String passwd, String cont, int likes, long views, Users user, LocalDateTime regDate, LocalDateTime updDate) {
         this.postNo = postNo;
         this.boardType = boardType;
         this.title = title;
         this.passwd = passwd;
         this.cont = cont;
-        this.recommend = recommend;
+        this.likes = likes;
         this.views = views;
         this.user = user;
         this.regDate = regDate;
@@ -92,12 +93,19 @@ public class Post {
         this.views += 1;
     }
 
-    public void hitLikeBtn() {
-        this.recommend += 1;
+    public void increaseLike() {
+        this.likes += 1;
+        this.user.increasePoint(PointPolicy.GET_LIKE);
     }
 
-    public void hitDisLikeBtn() {
-        this.recommend -= 1;
+    public void decreaseLike() {
+        this.likes -= 1;
+        this.user.decreasePoint(PointPolicy.CANCEL_LIKE);
+    }
+
+    public void increaseDislike() {
+        this.likes -= 1;
+        this.user.decreasePoint(PointPolicy.GET_DISLIKE);
     }
 
     @Override
@@ -108,7 +116,7 @@ public class Post {
                 ", title='" + title + '\'' +
                 ", passwd='" + passwd + '\'' +
                 ", cont='" + cont + '\'' +
-                ", recommend=" + recommend +
+                ", likes=" + likes +
                 ", views=" + views +
                 ", user=" + user +
                 ", regDate=" + regDate +

@@ -111,6 +111,14 @@ public class Users {
         this.nickname = nickname;
     }
 
+    public void increasePoint(int point) {
+        this.point += point;
+    }
+
+    public void decreasePoint(int point) {
+        this.point -= point;
+    }
+
     @Override
     public String toString() {
         return "Users{" +

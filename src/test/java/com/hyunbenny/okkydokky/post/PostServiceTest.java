@@ -1,17 +1,21 @@
 package com.hyunbenny.okkydokky.post;
 
+import com.hyunbenny.okkydokky.common.code.LikeStatus;
+import com.hyunbenny.okkydokky.common.code.PointPolicy;
+import com.hyunbenny.okkydokky.entity.LikeInfo;
 import com.hyunbenny.okkydokky.entity.Post;
 import com.hyunbenny.okkydokky.entity.Users;
 import com.hyunbenny.okkydokky.enums.BoardType;
 import com.hyunbenny.okkydokky.exception.PostNotFoundException;
 import com.hyunbenny.okkydokky.exception.UserNotExistException;
+import com.hyunbenny.okkydokky.likeInfo.repository.LikeInfoRepository;
 import com.hyunbenny.okkydokky.post.dto.reqDto.PostSaveReqDto;
 import com.hyunbenny.okkydokky.post.dto.reqDto.PostEditReqDto;
 import com.hyunbenny.okkydokky.post.dto.respDto.PostListRespDto;
 import com.hyunbenny.okkydokky.post.dto.respDto.PostRespDto;
 import com.hyunbenny.okkydokky.post.repository.PostRepository;
 import com.hyunbenny.okkydokky.users.UserRepository;
-import com.hyunbenny.okkydokky.util.PostPager;
+import com.hyunbenny.okkydokky.common.util.PostPager;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -46,6 +50,9 @@ public class PostServiceTest {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private LikeInfoRepository likeInfoRepository;
+
     @BeforeEach
     public void init() {
         Users user1 = Users.builder()
@@ -71,6 +78,7 @@ public class PostServiceTest {
     public void cleanUp() {
         postRepository.deleteAll();
         userRepository.deleteAll();
+        likeInfoRepository.deleteAll();
     }
 
     @Sql("classpath:testdb/postTableReset.sql")
@@ -96,6 +104,7 @@ public class PostServiceTest {
         assertThat(findPost.getTitle()).isEqualTo("게시글 제목");
         assertThat(findPost.getCont()).isEqualTo("게시글 내용");
         assertThat(findPost.getUser().getUserId()).isEqualTo("user1");
+        assertThat(findPost.getUser().getPoint()).isEqualTo(PointPolicy.ADD_POST);
 
     }
 
@@ -451,11 +460,12 @@ public class PostServiceTest {
     @Sql("classpath:testdb/postTableReset.sql")
     @Test
     @DisplayName("좋아요")
-    public void hitTheLikeBtn() {
+    public void hitTheLikeBtn_increaseLike() {
+        Long postNo = 1L;
         // given
         Users user = userRepository.findByUserId("user1").get();
         Post post = Post.builder()
-                .postNo(1L)
+                .postNo(postNo)
                 .boardType(BoardType.C)
                 .title("title1")
                 .cont("cont1")
@@ -466,14 +476,56 @@ public class PostServiceTest {
         postRepository.save(post);
 
         // when
-        Long postNo = 1L;
-        PostRespDto respDto = postService.hitLikeBtn(postNo);
+        postService.hitLikeBtn(postNo, "user2");
 
         // then
         Post findPost = postRepository.findById(postNo).get();
 
         assertThat(findPost.getPostNo()).isEqualTo(postNo);
-        assertThat(findPost.getRecommend()).isEqualTo(1);
+        assertThat(findPost.getLikes()).isEqualTo(1);
+        assertThat(findPost.getUser().getPoint()).isEqualTo(PointPolicy.GET_LIKE);
+    }
+
+    @Sql("classpath:testdb/postTableReset.sql")
+    @Test
+    @DisplayName("좋아요 취소")
+    public void cancelLikeBtn() {
+        Long postNo = 1L;
+        // given
+        Users user = userRepository.findByUserId("user1").get();
+        Post post = Post.builder()
+                .postNo(postNo)
+                .boardType(BoardType.C)
+                .title("title1")
+                .cont("cont1")
+                .passwd("1234")
+                .user(user)
+                .likes(1)
+                .regDate(LocalDateTime.now())
+                .build();
+        postRepository.save(post);
+
+        Users user2 = userRepository.findByUserId("user2").get();
+        LikeInfo likeInfo = LikeInfo.builder()
+                .postNo(post.getPostNo())
+                .userNo(user2.getUserNo())
+                .status(LikeStatus.LIKE)
+                .build();
+
+        likeInfoRepository.save(likeInfo);
+
+        // when
+        postService.hitLikeBtn(postNo, "user2");
+
+        // then
+        Users findUser = userRepository.findByUserId("user2").get();
+        Post findPost = postRepository.findById(postNo).get();
+        LikeInfo findLikeInfo = likeInfoRepository.findByPostNoAndUserId(postNo, findUser.getUserNo());
+
+        assertThat(findUser.getPoint()).isEqualTo(0);
+        assertThat(findPost.getPostNo()).isEqualTo(postNo);
+        assertThat(findPost.getLikes()).isEqualTo(0);
+        assertThat(findLikeInfo).isNull();
 
     }
 
@@ -482,9 +534,10 @@ public class PostServiceTest {
     @DisplayName("싫어요")
     public void hitTheDislikeBtn() {
         // given
+        Long postNo = 1L;
         Users user = userRepository.findByUserId("user1").get();
         Post post = Post.builder()
-                .postNo(1L)
+                .postNo(postNo)
                 .boardType(BoardType.C)
                 .title("title1")
                 .cont("cont1")
@@ -495,16 +548,14 @@ public class PostServiceTest {
         postRepository.save(post);
 
         // when
-        Long postNo = 1L;
-        PostRespDto respDto = postService.hitDislikeBtn(postNo);
-        log.info("========== respDto : {}", respDto.toString());
+        postService.hitDislikeBtn(postNo);
 
         // then
         Post findPost = postRepository.findById(postNo).get();
-        log.info("========== findPost : {}", findPost.toString());
 
         assertThat(findPost.getPostNo()).isEqualTo(postNo);
-        assertThat(findPost.getRecommend()).isEqualTo(-1);
+        assertThat(findPost.getLikes()).isEqualTo(-1);
+        assertThat(findPost.getUser().getPoint()).isEqualTo(-PointPolicy.GET_DISLIKE);
     }
 
 }

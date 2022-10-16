@@ -23,7 +23,7 @@ public class PostRespDto {
 
     private String passwd;
 
-    private int recommend;
+    private int likes;
 
     private long views;
 
@@ -39,7 +39,7 @@ public class PostRespDto {
         this.title = post.getTitle();
         this.cont = post.getCont();
         this.passwd = post.getPasswd();
-        this.recommend = post.getRecommend();
+        this.likes = post.getLikes();
         this.views = post.getViews();
         this.userId = post.getUser().getUserId();
         this.regDate = post.getRegDate();
@@ -55,7 +55,7 @@ public class PostRespDto {
                 ", title='" + title + '\'' +
                 ", cont='" + cont + '\'' +
                 ", passwd='" + passwd + '\'' +
-                ", recommend=" + recommend +
+                ", likes=" + likes +
                 ", views=" + views +
                 ", userId='" + userId + '\'' +
                 ", regDate=" + regDate +

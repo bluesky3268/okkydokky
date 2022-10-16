@@ -1,17 +1,20 @@
 package com.hyunbenny.okkydokky.post;
 
+import com.hyunbenny.okkydokky.common.code.LikeStatus;
+import com.hyunbenny.okkydokky.entity.LikeInfo;
 import com.hyunbenny.okkydokky.entity.Post;
 import com.hyunbenny.okkydokky.entity.Users;
 import com.hyunbenny.okkydokky.enums.BoardType;
 import com.hyunbenny.okkydokky.exception.PostNotFoundException;
 import com.hyunbenny.okkydokky.exception.UserNotExistException;
+import com.hyunbenny.okkydokky.likeInfo.repository.LikeInfoRepository;
 import com.hyunbenny.okkydokky.post.dto.reqDto.PostSaveReqDto;
 import com.hyunbenny.okkydokky.post.dto.reqDto.PostEditReqDto;
 import com.hyunbenny.okkydokky.post.dto.respDto.PostListRespDto;
 import com.hyunbenny.okkydokky.post.dto.respDto.PostRespDto;
 import com.hyunbenny.okkydokky.post.repository.PostRepository;
 import com.hyunbenny.okkydokky.users.UserRepository;
-import com.hyunbenny.okkydokky.util.PostPager;
+import com.hyunbenny.okkydokky.common.util.PostPager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -22,6 +25,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.hyunbenny.okkydokky.common.code.PointPolicy.ADD_POST;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -31,12 +36,16 @@ public class PostService {
 
     private final UserRepository userRepository;
 
+    private final LikeInfoRepository likeInfoRepository;
+
     // 게시글 등록
-    public void savePost(PostSaveReqDto saveReqDto) throws IllegalArgumentException, Exception {
+    @Transactional
+    public void savePost(PostSaveReqDto saveReqDto) {
 
         Users findUser = userRepository.findByUserId(saveReqDto.getUserId()).orElseThrow(() ->
                 new UserNotExistException(saveReqDto.getUserId()));
 
+        findUser.increasePoint(ADD_POST);
         postRepository.save(saveReqDto.toEntity(findUser));
     }
 
@@ -79,9 +88,30 @@ public class PostService {
 
     // 추천
     @Transactional
-    public PostRespDto hitLikeBtn(Long postNo) {
+    public PostRespDto hitLikeBtn(Long postNo, String hitLikeBtnUserId) {
         Post findPost = postRepository.findById(postNo).orElseThrow(() -> new PostNotFoundException());
-        findPost.hitLikeBtn();
+        Users findUser = userRepository.findByUserId(hitLikeBtnUserId).orElseThrow(() -> new UserNotExistException(hitLikeBtnUserId));
+
+        //  likeInfo 조회 후
+        LikeInfo findLikeInfo = likeInfoRepository.findByPostNoAndUserId(postNo, findUser.getUserNo());
+        if (findLikeInfo == null) {
+            // 1-1.없으면 insert
+            likeInfoRepository.save(LikeInfo.builder()
+                    .postNo(findPost.getPostNo())
+                    .userNo(findUser.getUserNo())
+                    .status(LikeStatus.LIKE)
+                    .build());
+
+            // 1-2.게시글의 추천 수 증가
+            findPost.increaseLike();
+        }else{
+            // 2-1. 이미 있으면 likeInfo delete
+            likeInfoRepository.deleteById(findLikeInfo.getLikeInfoNo());
+
+            // 2-2. 게시글 추천 수 하나 감소
+            findPost.decreaseLike();
+        }
+
         return new PostRespDto().toPostRespDto(findPost);
     }
 
@@ -89,7 +119,7 @@ public class PostService {
     @Transactional
     public PostRespDto hitDislikeBtn(Long postNo) {
         Post findPost = postRepository.findById(postNo).orElseThrow(() -> new PostNotFoundException());
-        findPost.hitDisLikeBtn();
+        findPost.increaseDislike();
         return new PostRespDto().toPostRespDto(findPost);
     }
 }

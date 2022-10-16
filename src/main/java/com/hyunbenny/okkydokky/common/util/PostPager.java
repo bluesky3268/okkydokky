@@ -1,4 +1,4 @@
-package com.hyunbenny.okkydokky.util;
+package com.hyunbenny.okkydokky.common.util;
 
 import lombok.Builder;
 import lombok.Getter;
