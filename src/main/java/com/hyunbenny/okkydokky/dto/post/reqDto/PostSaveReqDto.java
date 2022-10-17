@@ -1,4 +1,4 @@
-package com.hyunbenny.okkydokky.post.dto.reqDto;
+package com.hyunbenny.okkydokky.dto.post.reqDto;
 
 import com.hyunbenny.okkydokky.entity.Post;
 import com.hyunbenny.okkydokky.entity.Users;

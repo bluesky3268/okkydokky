@@ -1,4 +1,4 @@
-package com.hyunbenny.okkydokky.post.dto.reqDto;
+package com.hyunbenny.okkydokky.dto.post.reqDto;
 
 import com.hyunbenny.okkydokky.enums.BoardType;
 import lombok.Builder;

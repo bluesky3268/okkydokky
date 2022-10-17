@@ -1,4 +1,4 @@
-package com.hyunbenny.okkydokky.post.repository;
+package com.hyunbenny.okkydokky.repository.post;
 
 import com.hyunbenny.okkydokky.entity.Post;
 import com.hyunbenny.okkydokky.enums.BoardType;

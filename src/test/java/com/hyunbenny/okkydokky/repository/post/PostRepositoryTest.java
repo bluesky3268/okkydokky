@@ -1,10 +1,12 @@
-package com.hyunbenny.okkydokky.post.repository;
+package com.hyunbenny.okkydokky.repository.post;
 
+import com.hyunbenny.okkydokky.common.util.PostPager;
 import com.hyunbenny.okkydokky.config.QueryDslTestConfig;
 import com.hyunbenny.okkydokky.entity.Post;
 import com.hyunbenny.okkydokky.entity.Users;
 import com.hyunbenny.okkydokky.enums.BoardType;
-import com.hyunbenny.okkydokky.users.UserRepository;
+import com.hyunbenny.okkydokky.repository.post.PostRepository;
+import com.hyunbenny.okkydokky.repository.user.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,10 +15,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.Page;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -226,6 +232,38 @@ public class PostRepositoryTest {
         Optional<Post> findPost = postRepository.findById(postId);
         assertFalse(findPost.isPresent());
         assertTrue(findPost.isEmpty());
+    }
+
+    @Test
+    @DisplayName("게시글 조회 - 페이징")
+    public void findAllPostsWithPaging() {
+        Users user = userRepository.findByUserId("user1").get();
+        // given
+        List<Post> savedList = IntStream.range(1, 51)
+                .mapToObj(i -> Post.builder()
+                        .boardType(BoardType.C)
+                        .title("title" + i)
+                        .cont("cont" + i)
+                        .passwd("1234")
+                        .user(user)
+                        .regDate(LocalDateTime.now())
+                        .build())
+                .collect(Collectors.toList());
+
+        postRepository.saveAll(savedList);
+
+        // when
+        int page = 1;
+        int pageSize = 20;
+        PostPager pager = new PostPager(page, pageSize);
+        Page<Post> posts = postRepository.findAllPostsWithPaging(BoardType.C, pager.of("POST_NO"));
+
+        // then
+        assertThat(posts.getContent().size()).isEqualTo(20);
+        assertThat(posts.getPageable().getOffset()).isEqualTo(0);
+        assertThat(posts.getPageable().getPageSize()).isEqualTo(20);
+        assertThat(posts.getPageable().getPageNumber()).isEqualTo(0);
+
     }
 
 }

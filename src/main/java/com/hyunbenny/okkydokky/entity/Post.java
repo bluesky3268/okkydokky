@@ -2,7 +2,7 @@ package com.hyunbenny.okkydokky.entity;
 
 import com.hyunbenny.okkydokky.common.code.PointPolicy;
 import com.hyunbenny.okkydokky.enums.BoardType;
-import com.hyunbenny.okkydokky.post.dto.reqDto.PostEditReqDto;
+import com.hyunbenny.okkydokky.dto.post.reqDto.PostEditReqDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

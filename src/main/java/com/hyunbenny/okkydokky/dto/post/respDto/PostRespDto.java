@@ -1,4 +1,4 @@
-package com.hyunbenny.okkydokky.post.dto.respDto;
+package com.hyunbenny.okkydokky.dto.post.respDto;
 
 import com.hyunbenny.okkydokky.entity.Post;
 import com.hyunbenny.okkydokky.enums.BoardType;
@@ -10,7 +10,8 @@ import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor
-public class PostListRespDto {
+@AllArgsConstructor
+public class PostRespDto {
 
     private Long postNo;
 
@@ -18,7 +19,11 @@ public class PostListRespDto {
 
     private String title;
 
-    private int recommend;
+    private String cont;
+
+    private String passwd;
+
+    private int likes;
 
     private long views;
 
@@ -28,26 +33,29 @@ public class PostListRespDto {
 
     private LocalDateTime updDate;
 
-    public PostListRespDto toListRespDto(Post post) {
+    public PostRespDto toPostRespDto(Post post) {
         this.postNo = post.getPostNo();
         this.boardType = post.getBoardType();
         this.title = post.getTitle();
-        this.recommend = post.getLikes();
+        this.cont = post.getCont();
+        this.passwd = post.getPasswd();
+        this.likes = post.getLikes();
         this.views = post.getViews();
         this.userId = post.getUser().getUserId();
         this.regDate = post.getRegDate();
         this.updDate = post.getUpdDate();
-
         return this;
     }
 
     @Override
     public String toString() {
-        return "PostListRespDto{" +
+        return "PostRespDto{" +
                 "postNo=" + postNo +
-                ", boardType=" + boardType +
+                ", postType=" + boardType +
                 ", title='" + title + '\'' +
-                ", recommend=" + recommend +
+                ", cont='" + cont + '\'' +
+                ", passwd='" + passwd + '\'' +
+                ", likes=" + likes +
                 ", views=" + views +
                 ", userId='" + userId + '\'' +
                 ", regDate=" + regDate +

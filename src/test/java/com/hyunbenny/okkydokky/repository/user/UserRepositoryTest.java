@@ -1,11 +1,13 @@
-package com.hyunbenny.okkydokky.users;
+package com.hyunbenny.okkydokky.repository.user;
 
+import com.hyunbenny.okkydokky.config.QueryDslTestConfig;
 import com.hyunbenny.okkydokky.entity.Users;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.util.Optional;
@@ -15,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Slf4j
+@Import(QueryDslTestConfig.class)
 @DataJpaTest
 public class UserRepositoryTest {
 
@@ -97,10 +100,11 @@ public class UserRepositoryTest {
         userRepository.save(user);
 
         // when
-        Users findUser = userRepository.findByUserId("userB").get();
+        Optional<Users> findUser = userRepository.findByUserId("userB");
 
         // then
-        assertThat(findUser).isNull();
+        assertFalse(findUser.isPresent());
+        assertTrue(findUser.isEmpty());
     }
 
     @Test
@@ -250,8 +254,9 @@ public class UserRepositoryTest {
         userRepository.deleteByUserId(userIdParam);
 
         // then
-        Users findUser = userRepository.findByUserId(userIdParam).get();
+        Optional<Users> findUser = userRepository.findByUserId(userIdParam);
 
-        assertThat(findUser).isNull();
+        assertFalse(findUser.isPresent());
+        assertTrue(findUser.isEmpty());
     }
 }

@@ -1,4 +1,4 @@
-package com.hyunbenny.okkydokky.likeInfo;
+package com.hyunbenny.okkydokky.repository.post;
 
 import com.hyunbenny.okkydokky.common.code.LikeStatus;
 import com.hyunbenny.okkydokky.config.QueryDslTestConfig;
@@ -6,9 +6,9 @@ import com.hyunbenny.okkydokky.entity.LikeInfo;
 import com.hyunbenny.okkydokky.entity.Post;
 import com.hyunbenny.okkydokky.entity.Users;
 import com.hyunbenny.okkydokky.enums.BoardType;
-import com.hyunbenny.okkydokky.likeInfo.repository.LikeInfoRepository;
-import com.hyunbenny.okkydokky.post.repository.PostRepository;
-import com.hyunbenny.okkydokky.users.UserRepository;
+import com.hyunbenny.okkydokky.repository.likeInfo.LikeInfoRepository;
+import com.hyunbenny.okkydokky.repository.post.PostRepository;
+import com.hyunbenny.okkydokky.repository.user.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;

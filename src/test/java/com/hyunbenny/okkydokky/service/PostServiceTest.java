@@ -1,4 +1,4 @@
-package com.hyunbenny.okkydokky.post;
+package com.hyunbenny.okkydokky.service;
 
 import com.hyunbenny.okkydokky.common.code.LikeStatus;
 import com.hyunbenny.okkydokky.common.code.PointPolicy;
@@ -8,13 +8,14 @@ import com.hyunbenny.okkydokky.entity.Users;
 import com.hyunbenny.okkydokky.enums.BoardType;
 import com.hyunbenny.okkydokky.exception.PostNotFoundException;
 import com.hyunbenny.okkydokky.exception.UserNotExistException;
-import com.hyunbenny.okkydokky.likeInfo.repository.LikeInfoRepository;
-import com.hyunbenny.okkydokky.post.dto.reqDto.PostSaveReqDto;
-import com.hyunbenny.okkydokky.post.dto.reqDto.PostEditReqDto;
-import com.hyunbenny.okkydokky.post.dto.respDto.PostListRespDto;
-import com.hyunbenny.okkydokky.post.dto.respDto.PostRespDto;
-import com.hyunbenny.okkydokky.post.repository.PostRepository;
-import com.hyunbenny.okkydokky.users.UserRepository;
+import com.hyunbenny.okkydokky.repository.likeInfo.LikeInfoRepository;
+import com.hyunbenny.okkydokky.dto.post.reqDto.PostSaveReqDto;
+import com.hyunbenny.okkydokky.dto.post.reqDto.PostEditReqDto;
+import com.hyunbenny.okkydokky.dto.post.respDto.PostListRespDto;
+import com.hyunbenny.okkydokky.dto.post.respDto.PostRespDto;
+import com.hyunbenny.okkydokky.repository.post.PostRepository;
+import com.hyunbenny.okkydokky.service.PostService;
+import com.hyunbenny.okkydokky.repository.user.UserRepository;
 import com.hyunbenny.okkydokky.common.util.PostPager;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;

@@ -1,4 +1,4 @@
-package com.hyunbenny.okkydokky.post.repository;
+package com.hyunbenny.okkydokky.repository.post;
 
 import com.hyunbenny.okkydokky.entity.Post;
 import com.hyunbenny.okkydokky.entity.QPost;
@@ -10,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 
 import java.util.List;
 

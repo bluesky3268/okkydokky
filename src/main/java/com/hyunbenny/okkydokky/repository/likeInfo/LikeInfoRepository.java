@@ -1,4 +1,4 @@
-package com.hyunbenny.okkydokky.likeInfo.repository;
+package com.hyunbenny.okkydokky.repository.likeInfo;
 
 import com.hyunbenny.okkydokky.entity.LikeInfo;
 import org.springframework.data.jpa.repository.JpaRepository;
