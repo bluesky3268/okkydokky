@@ -28,6 +28,9 @@ public class LikeInfo {
     @Column(name = "POST_NO")
     private Long postNo;
 
+    @Column(name = "COMMENT_NO")
+    private Long commentNo;
+
     @Column(name = "USER_NO")
     private Long userNo;
 
@@ -40,9 +43,10 @@ public class LikeInfo {
     }
 
     @Builder
-    public LikeInfo(Long likeInfoNo, Long postNo, Long userNo, LikeStatus status) {
+    public LikeInfo(Long likeInfoNo, Long postNo, Long commentNo, Long userNo, LikeStatus status) {
         this.likeInfoNo = likeInfoNo;
         this.postNo = postNo;
+        this.commentNo = commentNo;
         this.userNo = userNo;
         this.status = status;
     }
@@ -52,6 +56,7 @@ public class LikeInfo {
         return "LikeInfo{" +
                 "likeInfoNo=" + likeInfoNo +
                 ", postNo=" + postNo +
+                ", commentNo=" + commentNo +
                 ", userNo=" + userNo +
                 ", status='" + status + '\'' +
                 '}';
