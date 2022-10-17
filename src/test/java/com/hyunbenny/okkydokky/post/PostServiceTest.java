@@ -500,21 +500,14 @@ public class PostServiceTest {
                 .cont("cont1")
                 .passwd("1234")
                 .user(user)
-                .likes(1)
                 .regDate(LocalDateTime.now())
                 .build();
         postRepository.save(post);
 
         Users user2 = userRepository.findByUserId("user2").get();
-        LikeInfo likeInfo = LikeInfo.builder()
-                .postNo(post.getPostNo())
-                .userNo(user2.getUserNo())
-                .status(LikeStatus.LIKE)
-                .build();
-
-        likeInfoRepository.save(likeInfo);
 
         // when
+        postService.hitLikeBtn(postNo, "user2");
         postService.hitLikeBtn(postNo, "user2");
 
         // then
@@ -526,7 +519,6 @@ public class PostServiceTest {
         assertThat(findPost.getPostNo()).isEqualTo(postNo);
         assertThat(findPost.getLikes()).isEqualTo(0);
         assertThat(findLikeInfo).isNull();
-
     }
 
     @Sql("classpath:testdb/postTableReset.sql")
@@ -548,14 +540,125 @@ public class PostServiceTest {
         postRepository.save(post);
 
         // when
-        postService.hitDislikeBtn(postNo);
+        postService.hitDislikeBtn(postNo, "user2");
 
         // then
         Post findPost = postRepository.findById(postNo).get();
 
         assertThat(findPost.getPostNo()).isEqualTo(postNo);
-        assertThat(findPost.getLikes()).isEqualTo(-1);
+        assertThat(findPost.getDislikes()).isEqualTo(1);
         assertThat(findPost.getUser().getPoint()).isEqualTo(-PointPolicy.GET_DISLIKE);
+    }
+
+    @Sql("classpath:testdb/postTableReset.sql")
+    @Test
+    @DisplayName("싫어요 취소")
+    public void cancelDislikeBtn() {
+        Long postNo = 1L;
+        // given
+        Users user = userRepository.findByUserId("user1").get();
+        Post post = Post.builder()
+                .postNo(postNo)
+                .boardType(BoardType.C)
+                .title("title1")
+                .cont("cont1")
+                .passwd("1234")
+                .user(user)
+                .regDate(LocalDateTime.now())
+                .build();
+        postRepository.save(post);
+
+        Users user2 = userRepository.findByUserId("user2").get();
+
+        // when
+        postService.hitDislikeBtn(postNo, user2.getUserId());
+        postService.hitDislikeBtn(postNo, user2.getUserId());
+
+        // then
+        Users findUser = userRepository.findByUserId("user2").get();
+        Post findPost = postRepository.findById(postNo).get();
+        LikeInfo findLikeInfo = likeInfoRepository.findByPostNoAndUserId(postNo, findUser.getUserNo());
+
+        assertThat(findUser.getPoint()).isEqualTo(0);
+        assertThat(findPost.getPostNo()).isEqualTo(postNo);
+        assertThat(findPost.getDislikes()).isEqualTo(0);
+        assertThat(findLikeInfo).isNull();
+    }
+
+    @Sql("classpath:testdb/postTableReset.sql")
+    @Test
+    @DisplayName("싫어요 -> 좋아요")
+    public void dislikeToLike() {
+        Long postNo = 1L;
+        // given
+        Users user = userRepository.findByUserId("user1").get();
+        Post post = Post.builder()
+                .postNo(postNo)
+                .boardType(BoardType.C)
+                .title("title1")
+                .cont("cont1")
+                .passwd("1234")
+                .user(user)
+                .regDate(LocalDateTime.now())
+                .build();
+        postRepository.save(post);
+
+        Users user2 = userRepository.findByUserId("user2").get();
+
+        // when
+        postService.hitDislikeBtn(postNo, user2.getUserId());
+        postService.hitLikeBtn(postNo, user2.getUserId());
+
+        // then
+        Users findUser = userRepository.findByUserId("user2").get();
+        Post findPost = postRepository.findById(postNo).get();
+        LikeInfo findLikeInfo = likeInfoRepository.findByPostNoAndUserId(postNo, findUser.getUserNo());
+
+        assertThat(findUser.getPoint()).isEqualTo(0);
+        assertThat(findPost.getPostNo()).isEqualTo(postNo);
+        assertThat(findPost.getLikes()).isEqualTo(1);
+        assertThat(findPost.getDislikes()).isEqualTo(0);
+        assertThat(findPost.getUser().getPoint()).isEqualTo(PointPolicy.GET_LIKE);
+        assertThat(findLikeInfo.getStatus()).isEqualTo(LikeStatus.LIKE);
+
+    }
+
+
+    @Sql("classpath:testdb/postTableReset.sql")
+    @Test
+    @DisplayName("좋아요 -> 싫어요")
+    public void likeToDislike() {
+        Long postNo = 1L;
+        // given
+        Users user = userRepository.findByUserId("user1").get();
+        Post post = Post.builder()
+                .postNo(postNo)
+                .boardType(BoardType.C)
+                .title("title1")
+                .cont("cont1")
+                .passwd("1234")
+                .user(user)
+                .regDate(LocalDateTime.now())
+                .build();
+        postRepository.save(post);
+
+        Users user2 = userRepository.findByUserId("user2").get();
+
+        // when
+        postService.hitLikeBtn(postNo, user2.getUserId());
+        postService.hitDislikeBtn(postNo, user2.getUserId());
+
+        // then
+        Users findUser = userRepository.findByUserId("user2").get();
+        Post findPost = postRepository.findById(postNo).get();
+        LikeInfo findLikeInfo = likeInfoRepository.findByPostNoAndUserId(postNo, findUser.getUserNo());
+
+        assertThat(findUser.getPoint()).isEqualTo(0);
+        assertThat(findPost.getPostNo()).isEqualTo(postNo);
+        assertThat(findPost.getLikes()).isEqualTo(0);
+        assertThat(findPost.getDislikes()).isEqualTo(1);
+        assertThat(findPost.getUser().getPoint()).isEqualTo(-PointPolicy.GET_DISLIKE);
+        assertThat(findLikeInfo.getStatus()).isEqualTo(LikeStatus.DISLIKE);
     }
 
 }

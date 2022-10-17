@@ -35,6 +35,10 @@ public class LikeInfo {
     @Enumerated(EnumType.STRING)
     private LikeStatus status;
 
+    public void updateLikeStatus(LikeStatus likeStatus) {
+        this.status = likeStatus;
+    }
+
     @Builder
     public LikeInfo(Long likeInfoNo, Long postNo, Long userNo, LikeStatus status) {
         this.likeInfoNo = likeInfoNo;

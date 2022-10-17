@@ -40,6 +40,9 @@ public class Post {
     @Column(name = "LIKES")
     private int likes;
 
+    @Column(name = "DISLIKES")
+    private int dislikes;
+
     @Column(name = "VIEWS")
     private long views;
 
@@ -56,13 +59,14 @@ public class Post {
     private LocalDateTime updDate;
 
     @Builder
-    public Post(Long postNo, BoardType boardType, String title, String passwd, String cont, int likes, long views, Users user, LocalDateTime regDate, LocalDateTime updDate) {
+    public Post(Long postNo, @NotNull BoardType boardType, @NotNull String title, @NotNull String passwd, @NotNull String cont, int likes, int dislikes, long views, @NotNull Users user, @NotNull LocalDateTime regDate, LocalDateTime updDate) {
         this.postNo = postNo;
         this.boardType = boardType;
         this.title = title;
         this.passwd = passwd;
         this.cont = cont;
         this.likes = likes;
+        this.dislikes = dislikes;
         this.views = views;
         this.user = user;
         this.regDate = regDate;
@@ -99,28 +103,43 @@ public class Post {
     }
 
     public void decreaseLike() {
-        this.likes -= 1;
+        if (this.likes <= 0) {
+            this.likes = 0;
+        }else{
+            this.likes -= 1;
+        }
         this.user.decreasePoint(PointPolicy.CANCEL_LIKE);
     }
 
     public void increaseDislike() {
-        this.likes -= 1;
+        this.dislikes += 1;
         this.user.decreasePoint(PointPolicy.GET_DISLIKE);
+    }
+
+    public void decreaseDislike() {
+        if (this.dislikes <= 0) {
+            this.dislikes = 0;
+        }else{
+            this.dislikes -= 1;
+        }
+        this.user.increasePoint(PointPolicy.CANCEL_DISLIKE);
     }
 
     @Override
     public String toString() {
         return "Post{" +
                 "postNo=" + postNo +
-                ", postType=" + boardType +
+                ", boardType=" + boardType +
                 ", title='" + title + '\'' +
                 ", passwd='" + passwd + '\'' +
                 ", cont='" + cont + '\'' +
                 ", likes=" + likes +
+                ", dislikes=" + dislikes +
                 ", views=" + views +
                 ", user=" + user +
                 ", regDate=" + regDate +
                 ", updDate=" + updDate +
                 '}';
     }
+
 }
