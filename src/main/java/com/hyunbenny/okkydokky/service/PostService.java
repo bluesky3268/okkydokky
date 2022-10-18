@@ -33,9 +33,7 @@ import static com.hyunbenny.okkydokky.common.code.PointPolicy.ADD_POST;
 public class PostService {
 
     private final PostRepository postRepository;
-
     private final UserRepository userRepository;
-
     private final LikeInfoRepository likeInfoRepository;
 
     // 게시글 등록
@@ -84,88 +82,5 @@ public class PostService {
         Post findPost = postRepository.findById(postNo).orElseThrow(() -> new PostNotFoundException());
         findPost.moveBoard(moveBoardType);
         return new PostRespDto().toPostRespDto(findPost);
-    }
-
-    // 추천
-    @Transactional
-    public PostRespDto hitLikeBtn(Long postNo, String hitLikeBtnUserId) {
-        Post findPost = postRepository.findById(postNo).orElseThrow(() -> new PostNotFoundException());
-        Users findUser = userRepository.findByUserId(hitLikeBtnUserId).orElseThrow(() -> new UserNotExistException(hitLikeBtnUserId));
-
-        //  likeInfo 조회 후
-        LikeInfo findLikeInfo = likeInfoRepository.findByPostNoAndUserId(postNo, findUser.getUserNo());
-        if (findLikeInfo == null) {
-            log.info("LIKEBTN========== findLikeInfo == null");
-            // 1-1.없으면 insert
-            likeInfoRepository.save(LikeInfo.builder()
-                    .postNo(findPost.getPostNo())
-                    .userNo(findUser.getUserNo())
-                    .status(LIKE)
-                    .build());
-
-            // 1-2.게시글의 추천 수 증가
-            turnOnLikeBtn(findPost);
-        }else if(findLikeInfo.getStatus() == LIKE){
-            log.info("LIKEBTN========== findLikeInfo.getStatus() == LIKE");
-            // 2-1. 이미 있으면 likeInfo delete
-            likeInfoRepository.deleteById(findLikeInfo.getLikeInfoNo());
-            // 2-2. 게시글 추천 수 하나 감소
-            turnOffLikeBtn(findPost);
-        }else {
-            log.info("LIKEBTN========== findLikeInfo.getStatus() == DISLIKE");
-            findLikeInfo.updateLikeStatus(LIKE);
-            turnOffDislikeBtn(findPost);
-            turnOnLikeBtn(findPost);
-        }
-
-        return new PostRespDto().toPostRespDto(findPost);
-    }
-
-    // 비추천
-    @Transactional
-    public PostRespDto hitDislikeBtn(Long postNo, String hitDislikeBtnUserId) {
-        Post findPost = postRepository.findById(postNo).orElseThrow(() -> new PostNotFoundException());
-        Users findUser = userRepository.findByUserId(hitDislikeBtnUserId).get();
-
-        LikeInfo findLikeInfo = likeInfoRepository.findByPostNoAndUserId(postNo, findUser.getUserNo());
-
-        if (findLikeInfo == null) {
-            log.info("DISLIKEBTN========== findLikeInfo IS NULL");
-            likeInfoRepository.save(LikeInfo.builder()
-                    .postNo(postNo)
-                    .userNo(findUser.getUserNo())
-                    .status(DISLIKE)
-                    .build());
-
-            turnOnDislikeBtn(findPost);
-        } else if (findLikeInfo.getStatus() == DISLIKE) {
-            log.info("DISLIKEBTN========== findLikeInfo.getStatus() == DISLIKE");
-
-            likeInfoRepository.deleteById(findLikeInfo.getLikeInfoNo());
-            turnOffDislikeBtn(findPost);
-        }else{
-            log.info("DISLIKEBTN========== findLikeInfo.getStatus() == LIKE");
-            findLikeInfo.updateLikeStatus(DISLIKE);
-            turnOffLikeBtn(findPost);
-            turnOnDislikeBtn(findPost);
-        }
-
-        return new PostRespDto().toPostRespDto(findPost);
-    }
-
-    private void turnOnLikeBtn(Post post) {
-        post.increaseLike();
-    }
-
-    private void turnOffLikeBtn(Post post) {
-        post.decreaseLike();
-    }
-
-    private void turnOnDislikeBtn(Post post) {
-        post.increaseDislike();
-    }
-
-    private void turnOffDislikeBtn(Post post) {
-        post.decreaseDislike();
     }
 }

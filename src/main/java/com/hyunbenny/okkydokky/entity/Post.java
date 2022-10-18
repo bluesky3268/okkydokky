@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -21,19 +23,15 @@ public class Post {
     @Column(name = "POST_NO")
     private Long postNo;
 
-    @NotNull
     @Column(name = "POST_TYPE")
     private BoardType boardType;
 
-    @NotNull
     @Column(name = "TITLE")
     private String title;
 
-    @NotNull
     @Column(name = "PASSWD")
     private String passwd;
 
-    @NotNull
     @Column(name = "CONT")
     private String cont;
 
@@ -46,12 +44,13 @@ public class Post {
     @Column(name = "VIEWS")
     private long views;
 
-    @NotNull
     @ManyToOne
     @JoinColumn(name = "USER_NO")
     private Users user;
 
-    @NotNull
+    @OneToMany(mappedBy = "post")
+    private List<Comments> commentsList = new ArrayList<>();
+
     @Column(name = "REG_DATE")
     private LocalDateTime regDate;
 
@@ -59,7 +58,7 @@ public class Post {
     private LocalDateTime updDate;
 
     @Builder
-    public Post(Long postNo, @NotNull BoardType boardType, @NotNull String title, @NotNull String passwd, @NotNull String cont, int likes, int dislikes, long views, @NotNull Users user, @NotNull LocalDateTime regDate, LocalDateTime updDate) {
+    public Post(Long postNo, BoardType boardType, String title, String passwd, String cont, int likes, int dislikes, long views, Users user, LocalDateTime regDate, LocalDateTime updDate) {
         this.postNo = postNo;
         this.boardType = boardType;
         this.title = title;

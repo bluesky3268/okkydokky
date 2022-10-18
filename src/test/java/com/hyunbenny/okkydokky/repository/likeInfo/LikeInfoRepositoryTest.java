@@ -1,4 +1,4 @@
-package com.hyunbenny.okkydokky.repository.post;
+package com.hyunbenny.okkydokky.repository.likeInfo;
 
 import com.hyunbenny.okkydokky.common.code.LikeStatus;
 import com.hyunbenny.okkydokky.config.QueryDslTestConfig;
@@ -119,7 +119,7 @@ public class LikeInfoRepositoryTest {
         likeInfoRepository.save(likeInfo);
 
         // when
-        LikeInfo findLikeInfo = likeInfoRepository.findByPostNoAndUserId(post.getPostNo(), user.getUserNo());
+        LikeInfo findLikeInfo = likeInfoRepository.findByPostNoAndUserNo(post.getPostNo(), user.getUserNo());
 
         // then
         assertThat(findLikeInfo.getPostNo()).isEqualTo(post.getPostNo());
@@ -129,7 +129,7 @@ public class LikeInfoRepositoryTest {
 
     @Sql("classpath:testdb/likeInfoTableReset.sql")
     @Test
-    @DisplayName("데이터 삭제")
+    @DisplayName("좋아요 정보 삭제")
     public void deleteLikeInfo() {
         // given
         Users user = Users.builder()

@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -34,20 +36,34 @@ public class Comments {
     @Column(name = "DISLIKES")
     private int dislikes;
 
-    private String regUser;
+    @ManyToOne
+    @JoinColumn(name = "PARENT_NO")
+    private Comments parentComm;
 
+    @OneToMany(mappedBy = "parentComm", orphanRemoval = true)
+    private List<Comments> childComm = new ArrayList<>();
+
+    @ManyToOne
+    @JoinColumn(name = "USER_NO")
+    private Users regUser;
+
+    @Column(name = "REG_DATE")
     private LocalDateTime regDate;
 
+
+    @Column(name = "UPD_DATE")
     private LocalDateTime updDate;
 
     @Builder
-    public Comments(Long commentNo, Post post, FileInfo fileInfo, String comment, int likes, int dislikes, String regUser, LocalDateTime regDate, LocalDateTime updDate) {
+    public Comments(Long commentNo, Post post, FileInfo fileInfo, String comment, int likes, int dislikes, Comments parentComm, List<Comments> childComm, Users regUser, LocalDateTime regDate, LocalDateTime updDate) {
         this.commentNo = commentNo;
         this.post = post;
         this.fileInfo = fileInfo;
         this.comment = comment;
         this.likes = likes;
         this.dislikes = dislikes;
+        this.parentComm = parentComm;
+        this.childComm = childComm;
         this.regUser = regUser;
         this.regDate = regDate;
         this.updDate = updDate;
@@ -62,7 +78,9 @@ public class Comments {
                 ", comment='" + comment + '\'' +
                 ", likes=" + likes +
                 ", dislikes=" + dislikes +
-                ", regUser='" + regUser + '\'' +
+                ", parentComm=" + parentComm +
+                ", childComm=" + childComm +
+                ", regUser=" + regUser +
                 ", regDate=" + regDate +
                 ", updDate=" + updDate +
                 '}';
