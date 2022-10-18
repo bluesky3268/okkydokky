@@ -1,8 +1,6 @@
 package com.hyunbenny.okkydokky.service;
 
-import com.hyunbenny.okkydokky.common.code.LikeStatus;
 import com.hyunbenny.okkydokky.common.code.PointPolicy;
-import com.hyunbenny.okkydokky.entity.LikeInfo;
 import com.hyunbenny.okkydokky.entity.Post;
 import com.hyunbenny.okkydokky.entity.Users;
 import com.hyunbenny.okkydokky.enums.BoardType;
@@ -14,9 +12,8 @@ import com.hyunbenny.okkydokky.dto.post.reqDto.PostEditReqDto;
 import com.hyunbenny.okkydokky.dto.post.respDto.PostListRespDto;
 import com.hyunbenny.okkydokky.dto.post.respDto.PostRespDto;
 import com.hyunbenny.okkydokky.repository.post.PostRepository;
-import com.hyunbenny.okkydokky.service.PostService;
 import com.hyunbenny.okkydokky.repository.user.UserRepository;
-import com.hyunbenny.okkydokky.common.util.PostPager;
+import com.hyunbenny.okkydokky.common.util.Pager;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -218,7 +215,7 @@ public class PostServiceTest {
         // when
         int page = 1;
         int pageSize = 20;
-        PostPager pager = new PostPager(page, pageSize);
+        Pager pager = new Pager(page, pageSize);
         pager.setDirection(Sort.Direction.DESC);
         Page<PostListRespDto> result = postService.getPostList(BoardType.C, pager);
 
@@ -254,7 +251,7 @@ public class PostServiceTest {
         // when
         int page = 3;
         int pageSize = 20;
-        PostPager pager = new PostPager(page, pageSize);
+        Pager pager = new Pager(page, pageSize);
         pager.setDirection(Sort.Direction.DESC);
         Page<PostListRespDto> result = postService.getPostList(BoardType.N, pager);
 

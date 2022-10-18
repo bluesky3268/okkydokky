@@ -1,5 +1,6 @@
 package com.hyunbenny.okkydokky.repository.comments;
 
+import com.hyunbenny.okkydokky.common.util.Pager;
 import com.hyunbenny.okkydokky.config.QueryDslTestConfig;
 import com.hyunbenny.okkydokky.entity.Comments;
 import com.hyunbenny.okkydokky.entity.Post;
@@ -20,7 +21,6 @@ import org.springframework.test.context.jdbc.Sql;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -139,7 +139,7 @@ class CommentsRepositoryTest {
         Users user = userRepository.findByUserId("user1").get();
         Post post = postRepository.findById(1L).get();
 
-        List<Comments> comments = IntStream.range(1, 11)
+        List<Comments> comments = IntStream.range(1, 30)
                 .mapToObj(i -> Comments.builder()
                         .comment("댓글 테스트" + i)
                         .post(post)
@@ -151,10 +151,13 @@ class CommentsRepositoryTest {
         commentsRepository.saveAll(comments);
 
         // when
-        List<Comments> findComments = commentsRepository.findAllByPostNo(post.getPostNo());
+        int page = 1;
+        int pageSize = 20;
+        Pager pager = new Pager(page, pageSize);
+        List<Comments> findComments = commentsRepository.findAllByPostNo(post.getPostNo(), pager.of("COMMENT_NO"));
 
         // then
-        assertThat(findComments.size()).isEqualTo(10);
+        assertThat(findComments.size()).isEqualTo(20);
     }
 
     @Sql("classpath:testdb/commentsTableReset.sql")
@@ -176,21 +179,23 @@ class CommentsRepositoryTest {
 
         commentsRepository.saveAll(comments);
 
-        Comments child = Comments.builder()
-                .comment("대댓글 테스트")
+        List<Comments> childList = IntStream.range(1, 11).mapToObj(i -> Comments.builder()
+                .comment("대댓글 테스트" + i)
                 .post(post)
                 .parentComm(comments.get(0))
                 .regUser(user)
                 .regDate(LocalDateTime.now())
-                .build();
-        commentsRepository.save(child);
+                .build())
+                .collect(Collectors.toList());
+
+        commentsRepository.saveAll(childList);
 
         // when
         List<Comments> allChildComments = commentsRepository.findAllChildComments(post.getPostNo());
 
         // then
-        assertThat(allChildComments.size()).isEqualTo(1);
-        log.info("========== 대댓글 테스트 : {}", allChildComments.get(0).toString());
+        assertThat(allChildComments.size()).isEqualTo(10);
+        log.info("========== childList : {}", childList.toString());
     }
 
     @Test

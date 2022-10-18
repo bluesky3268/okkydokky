@@ -48,7 +48,7 @@ public class LikeInfoRepositoryTest {
 
     @Sql("classpath:testdb/likeInfoTableReset.sql")
     @Test
-    @DisplayName("좋아요 버튼 클릭 시 정보 저장")
+    @DisplayName("게시글 좋아요 버튼 클릭 시 정보 저장")
     public void hitLikeBtn() {
         // given
         Users user = Users.builder()
@@ -88,7 +88,7 @@ public class LikeInfoRepositoryTest {
 
     @Sql("classpath:testdb/likeInfoTableReset.sql")
     @Test
-    @DisplayName("좋아요 정보 조회 - 성공")
+    @DisplayName("게시글 좋아요 정보 조회 - 성공")
     public void getLikeInfo() {
         // given
         Users user = Users.builder()
@@ -129,7 +129,7 @@ public class LikeInfoRepositoryTest {
 
     @Sql("classpath:testdb/likeInfoTableReset.sql")
     @Test
-    @DisplayName("좋아요 정보 삭제")
+    @DisplayName("게시글 좋아요 정보 삭제")
     public void deleteLikeInfo() {
         // given
         Users user = Users.builder()

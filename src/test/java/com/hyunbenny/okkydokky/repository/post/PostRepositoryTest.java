@@ -1,11 +1,10 @@
 package com.hyunbenny.okkydokky.repository.post;
 
-import com.hyunbenny.okkydokky.common.util.PostPager;
+import com.hyunbenny.okkydokky.common.util.Pager;
 import com.hyunbenny.okkydokky.config.QueryDslTestConfig;
 import com.hyunbenny.okkydokky.entity.Post;
 import com.hyunbenny.okkydokky.entity.Users;
 import com.hyunbenny.okkydokky.enums.BoardType;
-import com.hyunbenny.okkydokky.repository.post.PostRepository;
 import com.hyunbenny.okkydokky.repository.user.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
@@ -255,7 +254,7 @@ public class PostRepositoryTest {
         // when
         int page = 1;
         int pageSize = 20;
-        PostPager pager = new PostPager(page, pageSize);
+        Pager pager = new Pager(page, pageSize);
         Page<Post> posts = postRepository.findAllPostsWithPaging(BoardType.C, pager.of("POST_NO"));
 
         // then

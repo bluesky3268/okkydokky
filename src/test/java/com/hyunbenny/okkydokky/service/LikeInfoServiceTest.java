@@ -72,7 +72,7 @@ public class LikeInfoServiceTest {
 
     @Sql("classpath:testdb/likeInfoTableReset.sql")
     @Test
-    @DisplayName("좋아요")
+    @DisplayName("게시글 좋아요")
     public void hitTheLikeBtn_increaseLike() {
         Long postNo = 1L;
         // given
@@ -101,7 +101,7 @@ public class LikeInfoServiceTest {
 
     @Sql("classpath:testdb/likeInfoTableReset.sql")
     @Test
-    @DisplayName("좋아요 실패 - 게시글 없음")
+    @DisplayName("게시글 좋아요 실패 - 게시글 없음")
     public void hitTheLikeBtn_NotFoundPost() {
         Long postNo = 1L;
         // given
@@ -132,7 +132,7 @@ public class LikeInfoServiceTest {
 
     @Sql("classpath:testdb/likeInfoTableReset.sql")
     @Test
-    @DisplayName("좋아요 실패 - 유저 없음")
+    @DisplayName("게시글 좋아요 실패 - 유저 없음")
     public void hitTheLikeBtn_NotFoundUser() {
         Long postNo = 1L;
         // given
@@ -163,7 +163,7 @@ public class LikeInfoServiceTest {
 
     @Sql("classpath:testdb/likeInfoTableReset.sql")
     @Test
-    @DisplayName("좋아요 취소")
+    @DisplayName("게시글 좋아요 취소")
     public void cancelLikeBtn() {
         Long postNo = 1L;
         // given
@@ -198,7 +198,7 @@ public class LikeInfoServiceTest {
 
     @Sql("classpath:testdb/likeInfoTableReset.sql")
     @Test
-    @DisplayName("좋아요 취소 실패 - 게시글 없음")
+    @DisplayName("게시글 좋아요 취소 실패 - 게시글 없음")
     public void cancelLikeBtn_NotFoundPost() {
         Long postNo = 1L;
         // given
@@ -230,7 +230,7 @@ public class LikeInfoServiceTest {
 
     @Sql("classpath:testdb/likeInfoTableReset.sql")
     @Test
-    @DisplayName("좋아요 취소 실패 - 유저 없음")
+    @DisplayName("게시글 좋아요 취소 실패 - 유저 없음")
     public void cancelLikeBtn_NotFoundUser() {
         Long postNo = 1L;
         // given
@@ -261,7 +261,7 @@ public class LikeInfoServiceTest {
 
     @Sql("classpath:testdb/likeInfoTableReset.sql")
     @Test
-    @DisplayName("싫어요")
+    @DisplayName("게시글 싫어요")
     public void hitTheDislikeBtn() {
         // given
         Long postNo = 1L;
@@ -290,7 +290,7 @@ public class LikeInfoServiceTest {
 
     @Sql("classpath:testdb/likeInfoTableReset.sql")
     @Test
-    @DisplayName("싫어요 실패 - 게시글 없음")
+    @DisplayName("게시글 싫어요 실패 - 게시글 없음")
     public void hitTheDislikeBtn_NotFoundPost() {
         Long postNo = 1L;
         // given
@@ -321,7 +321,7 @@ public class LikeInfoServiceTest {
 
     @Sql("classpath:testdb/likeInfoTableReset.sql")
     @Test
-    @DisplayName("싫어요 실패 - 유저 없음")
+    @DisplayName("게시글 싫어요 실패 - 유저 없음")
     public void hitTheDislikeBtn_NotFoundUser() {
         Long postNo = 1L;
         // given
@@ -352,7 +352,7 @@ public class LikeInfoServiceTest {
 
     @Sql("classpath:testdb/likeInfoTableReset.sql")
     @Test
-    @DisplayName("싫어요 취소")
+    @DisplayName("게시글 싫어요 취소")
     public void cancelDislikeBtn() {
         Long postNo = 1L;
         // given
@@ -387,7 +387,7 @@ public class LikeInfoServiceTest {
 
     @Sql("classpath:testdb/likeInfoTableReset.sql")
     @Test
-    @DisplayName("싫어요 취소 실패 - 게시글 없음")
+    @DisplayName("게시글 싫어요 취소 실패 - 게시글 없음")
     public void cancelDislikeBtn_NotFoundPost() {
         Long postNo = 1L;
         // given
@@ -419,7 +419,7 @@ public class LikeInfoServiceTest {
 
     @Sql("classpath:testdb/likeInfoTableReset.sql")
     @Test
-    @DisplayName("싫어요 취소 실패 - 유저 없음")
+    @DisplayName("게시글 싫어요 취소 실패 - 유저 없음")
     public void cancelDislikeBtn_NotFoundUser() {
         Long postNo = 1L;
         // given
@@ -450,7 +450,7 @@ public class LikeInfoServiceTest {
 
     @Sql("classpath:testdb/likeInfoTableReset.sql")
     @Test
-    @DisplayName("싫어요 -> 좋아요")
+    @DisplayName("게시글 싫어요 -> 좋아요")
     public void dislikeToLike() {
         Long postNo = 1L;
         // given
@@ -487,7 +487,7 @@ public class LikeInfoServiceTest {
 
     @Sql("classpath:testdb/likeInfoTableReset.sql")
     @Test
-    @DisplayName("싫어요 -> 좋아요 실패 - 게시글 없음")
+    @DisplayName("게시글 싫어요 -> 좋아요 실패 - 게시글 없음")
     public void dislikeToLike_PostNotFound() {
         Long postNo = 1L;
         // given
@@ -520,7 +520,7 @@ public class LikeInfoServiceTest {
 
     @Sql("classpath:testdb/likeInfoTableReset.sql")
     @Test
-    @DisplayName("싫어요 -> 좋아요 실패 - 유저 없음")
+    @DisplayName("게시글 싫어요 -> 좋아요 실패 - 유저 없음")
     public void dislikeToLike_UserNotFound() {
         Long postNo = 1L;
         // given
@@ -554,7 +554,7 @@ public class LikeInfoServiceTest {
 
     @Sql("classpath:testdb/likeInfoTableReset.sql")
     @Test
-    @DisplayName("좋아요 -> 싫어요")
+    @DisplayName("게시글 좋아요 -> 싫어요")
     public void likeToDislike() {
         Long postNo = 1L;
         // given
@@ -591,7 +591,7 @@ public class LikeInfoServiceTest {
 
     @Sql("classpath:testdb/likeInfoTableReset.sql")
     @Test
-    @DisplayName("좋아요 -> 싫어요 실패 - 게시글 없음")
+    @DisplayName("게시글 좋아요 -> 싫어요 실패 - 게시글 없음")
     public void likeToDislike_PostNotFound() {
         Long postNo = 1L;
         // given
@@ -624,7 +624,7 @@ public class LikeInfoServiceTest {
 
     @Sql("classpath:testdb/likeInfoTableReset.sql")
     @Test
-    @DisplayName("좋아요 -> 싫어요 실패 - 유저 없음")
+    @DisplayName("게시글 좋아요 -> 싫어요 실패 - 유저 없음")
     public void likeToDislike_UserNotFound() {
         Long postNo = 1L;
         // given

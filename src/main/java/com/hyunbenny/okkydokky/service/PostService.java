@@ -1,6 +1,5 @@
 package com.hyunbenny.okkydokky.service;
 
-import com.hyunbenny.okkydokky.entity.LikeInfo;
 import com.hyunbenny.okkydokky.entity.Post;
 import com.hyunbenny.okkydokky.entity.Users;
 import com.hyunbenny.okkydokky.enums.BoardType;
@@ -13,7 +12,7 @@ import com.hyunbenny.okkydokky.dto.post.respDto.PostListRespDto;
 import com.hyunbenny.okkydokky.dto.post.respDto.PostRespDto;
 import com.hyunbenny.okkydokky.repository.post.PostRepository;
 import com.hyunbenny.okkydokky.repository.user.UserRepository;
-import com.hyunbenny.okkydokky.common.util.PostPager;
+import com.hyunbenny.okkydokky.common.util.Pager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -24,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.hyunbenny.okkydokky.common.code.LikeStatus.*;
 import static com.hyunbenny.okkydokky.common.code.PointPolicy.ADD_POST;
 
 @Slf4j
@@ -56,7 +54,7 @@ public class PostService {
     }
 
     // 게시글 목록 조회
-    public Page<PostListRespDto> getPostList(BoardType boardType, PostPager pager) {
+    public Page<PostListRespDto> getPostList(BoardType boardType, Pager pager) {
         Page<Post> result = postRepository.findAllPostsWithPaging(boardType, pager.of("POST_NO"));
         List<PostListRespDto> postList = result.getContent().stream().map(post -> new PostListRespDto().toListRespDto(post)).collect(Collectors.toList());
         return new PageImpl<>(postList, result.getPageable(), postList.size());

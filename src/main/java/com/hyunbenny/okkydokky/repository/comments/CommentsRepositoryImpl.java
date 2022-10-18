@@ -6,6 +6,7 @@ import com.hyunbenny.okkydokky.entity.QPost;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -20,10 +21,12 @@ public class CommentsRepositoryImpl implements CommentsRepositoryCustom{
 
     // 최상위 부모 댓글만 조회
     @Override
-    public List<Comments> findAllByPostNo(Long postNo) {
+    public List<Comments> findAllByPostNo(Long postNo, Pageable pageable) {
         return  queryFactory.selectFrom(comment)
                 .where(post.postNo.eq(postNo).and(comment.parentComm.isNull()))
                 .orderBy(comment.commentNo.asc())
+                .limit(pageable.getPageSize())
+                .offset(pageable.getOffset())
                 .fetch();
     }
 

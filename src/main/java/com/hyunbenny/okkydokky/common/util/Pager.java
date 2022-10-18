@@ -8,7 +8,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 
 @Getter
-public class PostPager {
+public class Pager {
 
     private final Integer MAXSIZE = 100;
 
@@ -21,7 +21,7 @@ public class PostPager {
     private Sort.Direction direction = Sort.Direction.DESC;
 
     @Builder
-    public PostPager(int page, int size) {
+    public Pager(int page, int size) {
         this.page = page <= 0 ? 0 : page -1;
         this.size = size <= 0 ? MINSIZE : Math.min(size, MAXSIZE);
     }
